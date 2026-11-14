@@ -1,0 +1,33 @@
+id,name,group,agency,status,lat_deg,lon_deg,coord_type,notes,source,source_url
+apollo11,Apollo 11 (Tranquility Base),apollo,NASA,landed 1969,0.67416,23.47314,landed,,NASA NSSDCA / LROC,https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo_landings.html
+apollo12,Apollo 12,apollo,NASA,landed 1969,-3.01239,-23.42157,landed,,NASA NSSDCA / LROC,https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo_landings.html
+apollo14,Apollo 14,apollo,NASA,landed 1971,-3.64530,-17.47136,landed,,NASA NSSDCA / LROC,https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo_landings.html
+apollo15,Apollo 15 (Hadley-Apennine),apollo,NASA,landed 1971,26.13222,3.63386,landed,Mountains nearby: good terrain-horizon example,NASA NSSDCA / LROC,https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo_landings.html
+apollo16,Apollo 16,apollo,NASA,landed 1972,-8.97301,15.50019,landed,,NASA NSSDCA / LROC,https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo_landings.html
+apollo17,Apollo 17 (Taurus-Littrow),apollo,NASA,landed 1972,20.19080,30.77168,landed,Valley site,NASA NSSDCA / LROC,https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo_landings.html
+change3,Chang'e 3,china,CNSA,landed 2013,44.1214,-19.5116,landed,,CNSA / published landing coordinates,https://en.wikipedia.org/wiki/Chang%27e_3
+change4,Chang'e 4 (far side),china,CNSA,landed 2019,-45.4446,177.5991,landed,Far side: Earth never visible (relay satellite needed),CNSA / published landing coordinates,https://en.wikipedia.org/wiki/Chang%27e_4
+change5,Chang'e 5,china,CNSA,landed 2020,43.0576,-51.9161,landed,,CNSA / published landing coordinates,https://en.wikipedia.org/wiki/Chang%27e_5
+change6,Chang'e 6 (far side),china,CNSA,landed 2024,-41.6385,-153.9852,landed,Far side: Earth never visible (relay satellite needed),CNSA / published landing coordinates,https://en.wikipedia.org/wiki/Chang%27e_6
+chandrayaan3,Chandrayaan-3 (Vikram),india,ISRO,landed 2023,-69.373,32.319,landed,,ISRO,https://www.isro.gov.in/Chandrayaan3_Details.html
+slim,SLIM,japan,JAXA,landed 2024,-13.3160,25.2510,landed,,JAXA,https://global.jaxa.jp/projects/sas/slim/
+im1,IM-1 Odysseus,clps,Intuitive Machines / NASA CLPS,landed 2024 (tipped over),-80.1297,1.4371,landed,Near Malapert A,LROC,https://www.lroc.asu.edu/images/1340
+bgm1,Blue Ghost Mission 1,clps,Firefly / NASA CLPS,landed 2025,18.5615,61.8099,landed,Mare Crisium,LROC,https://www.lroc.asu.edu/images/1412
+im2,IM-2 Athena (intended site),clps,Intuitive Machines / NASA CLPS,landed 2025 (tipped over),-84.78,29.13,target,Landed ~250 m from this intended point,LROC Featured Image 1401,https://www.lroc.asu.edu/images/1401
+im3,IM-3 (Reiner Gamma),clps,Intuitive Machines / NASA CLPS,planned,7.5,-59.0,approximate,Center of the Reiner Gamma swirl; exact target TBD,NASA Moon Base,https://www.nasa.gov/moonbase-phases/
+change7,Chang'e 7 (planned),china,CNSA,planned (delayed to 2027),-88.8,123.4,approximate,Peak near the SE ridge of Shackleton crater,Zou et al. LPSC 2020 (via Wikipedia),https://en.wikipedia.org/wiki/Chang%27e_7
+a3_mons_mouton_plateau,Artemis III: Mons Mouton Plateau,artemis3,NASA,candidate region,-85.67,24.45,region center,,Wen et al. 2025 (ResGAT-F) Table 4,https://www.tandfonline.com/doi/full/10.1080/17538947.2025.2547291
+a3_de_gerlache_rim_2,Artemis III: de Gerlache Rim 2,artemis3,NASA,candidate region,-88.13,-74.37,region center,,Wen et al. 2025 (ResGAT-F) Table 4,https://www.tandfonline.com/doi/full/10.1080/17538947.2025.2547291
+a3_slater_plain,Artemis III: Slater Plain,artemis3,NASA,candidate region,-86.96,126.82,region center,,Wen et al. 2025 (ResGAT-F) Table 4,https://www.tandfonline.com/doi/full/10.1080/17538947.2025.2547291
+a3_peak_near_cabeus_b,Artemis III: Peak near Cabeus B,artemis3,NASA,candidate region,-83.54,-68.15,region center,,Wen et al. 2025 (ResGAT-F) Table 4,https://www.tandfonline.com/doi/full/10.1080/17538947.2025.2547291
+a3_malapert_massif,Artemis III: Malapert Massif,artemis3,NASA,candidate region,-85.96,-0.48,region center,,Wen et al. 2025 (ResGAT-F) Table 4,https://www.tandfonline.com/doi/full/10.1080/17538947.2025.2547291
+a3_haworth,Artemis III: Haworth,artemis3,NASA,candidate region,-86.89,-22.17,region center,,Wen et al. 2025 (ResGAT-F) Table 4,https://www.tandfonline.com/doi/full/10.1080/17538947.2025.2547291
+a3_nobile_rim_2,Artemis III: Nobile Rim 2,artemis3,NASA,candidate region,-84.20156,60.69989,best point in region,Top-ranked landing point in the region (not its center),Multi-criteria study of Artemis III sites (ResearchGate 385942633),https://www.researchgate.net/publication/385942633
+a3_mons_mouton,Artemis III: Mons Mouton,artemis3,NASA,candidate region,,,TODO,Read region center from Quickmap's Artemis III layer,NASA,https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/
+a3_nobile_rim_1,Artemis III: Nobile Rim 1,artemis3,NASA,candidate region,,,TODO,Read region center from Quickmap's Artemis III layer (latitude about -85.4),NASA,https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/
+shackleton_rim_sr1,Shackleton rim (ESA study point SR1),reference,ESA study,reference point,-89.7755,-156.448,region center,One of the best-lit spots at the pole; near the connecting ridge,De Rosa et al. 2012 (ESA Lunar Lander) Table,https://arxiv.org/abs/1208.5587
+de_gerlache_rim_gr1,de Gerlache rim (ESA study point GR1),reference,ESA study,reference point,-88.6952,-68.2846,region center,,De Rosa et al. 2012 (ESA Lunar Lander) Table,https://arxiv.org/abs/1208.5587
+leibnitz_beta_lp1,Leibnitz beta plateau / Mons Mouton (ESA study point LP1),reference,ESA study,reference point,-85.4596,31.78053,region center,,De Rosa et al. 2012 (ESA Lunar Lander) Table,https://arxiv.org/abs/1208.5587
+griffin1,Griffin Mission One (Nobile region),clps,Astrobotic / NASA CLPS,planned,,,TODO,Exact target not published; Nobile crater region near Mons Mouton,NASA Moon Base,https://www.nasa.gov/moonbase-phases/
+bluemoon_mk1,Blue Moon MK1 Endurance (Shackleton connecting ridge),clps,Blue Origin / NASA,planned,,,TODO,Exact target not published,NASA Moon Base,https://www.nasa.gov/moonbase-phases/
+south_pole,Lunar south pole (exact),reference,,reference point,-90.0,0.0,exact,For teaching: Sun never more than ~1.6 deg above a flat horizon,,
