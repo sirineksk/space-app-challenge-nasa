@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compare · LUMINALUNA</title>
+<link rel="icon" href="assets/logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="main">
+  <header class="top">
+    <div><h1>Compare</h1><div class="sub">Up to 4 sites side by side, or the same site on two landing dates.</div></div>
+    <div class="controls" id="controls"></div>
+  </header>
+
+  <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px">
+    <div class="seg" id="tabs"><button data-m="sites" class="on">Compare sites</button><button data-m="dates">Same site, 2 dates <span class="muted" style="font-size:11px">(launch delay)</span></button></div>
+    <div class="controls" id="tools"></div>
+  </div>
+
+  <div class="note" id="windowNote" style="margin-bottom:12px"></div>
+  <div class="cols4" id="cols"><div class="loading">Computing…</div></div>
+
+  <section class="card" style="margin-top:20px">
+    <div class="card-head"><div><h2 style="display:inline">30-day timeline</h2> <span class="mono muted" id="tlRange" style="font-size:12px"></span></div>
+      <div class="legend"><span><i style="background:var(--sun)"></i>Sunlight</span><span><i style="background:var(--earth)"></i>Earth in view</span></div></div>
+    <div id="tl"></div>
+  </section>
+
+  <section class="card" style="margin-top:20px;display:flex;gap:16px;align-items:flex-start">
+    <span class="ms earth" style="font-size:26px;margin-top:4px">info</span>
+    <div><div class="summary" id="summary"></div><div class="note" id="summaryNote" style="margin-top:8px"></div></div>
+  </section>
+  <footer class="credits" id="credits"></footer>
+</main>
+<script type="module" src="js/compare.js"></script>
+</body>
+</html>

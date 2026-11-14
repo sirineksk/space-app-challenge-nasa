@@ -39,6 +39,24 @@ and 6 sites never see Earth.
 Adding the 240 m map (mountains 300+ km away) changed no polar result: the
 lunar curve hides such distant terrain.
 
+## Web app vs. Python pipeline
+
+The browser engine (`app/js/`) re-implements the same formulas. For 2026, catalog sites:
+
+| Site | Sun % JS / PY | Earth % JS / PY | Energy Wh/day JS / PY |
+|---|---|---|---|
+| Shackleton rim SR1 | 85.3 / 85.2 | 49.7 / 49.7 | 8388 / 8388 |
+| Malapert Massif | 54.9 / 54.9 | 98.8 / 98.9 | 5414 / 5415 |
+| Nobile Rim 2 | 31.9 / 31.9 | 24.6 / 24.6 | 3119 / 3119 |
+| Chandrayaan-3 | 48.6 / 48.6 | 100 / 100 | 4590 / 4590 |
+
+**Custom points** (clicked on the map) use lighter 240 m terrain computed in the browser.
+Rays start 360 m from the observer (1.5 grid cells) so the smoothed terrain does not shade
+a sharp crest. Against the 80 m skylines (sun % / Earth %, 240 m vs 80 m):
+Shackleton 84/85 · 50/50, de Gerlache GR1 80/82, Malapert 56/55 · 100/99, Nobile Rim 2 34/32,
+Haworth 54/56, Chang'e 7 86/81. Exception: at the exact pole Earth visibility is 45 % vs 23 %,
+because Earth grazes a ridge there; the UI labels custom points as "240 m terrain".
+
 ## Still to do
 
 - Compare `site_summary` "% of time lit" at classic sites (e.g. Shackleton rim)

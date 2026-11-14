@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Site detail · LUMINALUNA</title>
+<link rel="icon" href="assets/logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="main">
+  <header class="top">
+    <div>
+      <div class="mono muted" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">Site detail
+        <select id="pick" class="field" style="display:inline-block;width:auto;padding:2px 6px;margin-left:8px;font:12px var(--mono)"></select></div>
+      <h1 id="title">…</h1><div class="sub mono" id="subtitle" style="font-size:13px"></div>
+    </div>
+    <div class="controls" id="controls">
+      <button class="btn" id="addcmp"><span class="ms">add</span> Add to compare</button>
+    </div>
+  </header>
+
+  <div class="grid site-grid" id="statusrow">
+    <section class="card" id="sunCard"><div class="loading">Computing…</div></section>
+    <section class="card" id="earthCard"><div class="loading">Computing…</div></section>
+  </div>
+
+  <section class="card panorama" style="margin-top:20px">
+    <div class="card-head">
+      <div><h2 style="display:inline">360° skyline</h2> <span class="note b-only" style="margin-left:6px">What you would see turning around once on the spot. Sun and Earth must be above the hills.</span></div>
+      <div class="legend"><span><i style="background:var(--sun)"></i>Sun path, next 30 days</span><span><i style="background:var(--earth)"></i>Earth path</span><span><i style="background:#2A3A52"></i>Terrain</span></div>
+    </div>
+    <div id="pano"></div>
+    <div class="note x-only" id="panoNote" style="margin-top:8px"></div>
+  </section>
+
+  <section class="card timeline" style="margin-top:20px">
+    <div class="card-head">
+      <div><h2 style="display:inline">30-day timeline</h2> <span class="mono muted" id="tlRange" style="font-size:12px"></span></div>
+      <div class="controls">
+        <div class="seg small" id="speed"><button data-s="1" class="on">1 h</button><button data-s="3">3 h</button><button data-s="8">8 h</button></div>
+        <button class="btn sm" id="play"><span class="ms">play_arrow</span> Play</button>
+      </div>
+    </div>
+    <div class="legend" style="margin-bottom:10px"><span><i style="background:var(--sun)"></i>Sunlight (power)</span><span><i style="background:var(--earth)"></i>Earth in view (radio contact)</span><span><i style="background:#E8EDF4;width:3px"></i>Chosen time — click the timeline to move it</span></div>
+    <div id="tl"></div>
+  </section>
+
+  <div class="grid site-grid" style="margin-top:20px">
+    <section class="card">
+      <div class="card-head"><h2>Communication windows</h2><span class="mono muted" style="font-size:12px">direct-to-Earth</span></div>
+      <div id="windows"><div class="loading">…</div></div>
+    </section>
+    <section class="card" id="eco">
+      <div class="card-head"><div><h2 style="display:inline">Nearest spot that sees Earth</h2></div><span class="tag earth">ECO-PATH</span></div>
+      <div id="ecoBody"></div>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:20px">
+    <div class="card-head"><div><h2 style="display:inline">Month by month</h2> <span class="mono muted" id="yr" style="font-size:12px"></span></div>
+      <div class="legend"><span><i style="background:var(--sun)"></i>% sunlight</span><span><i style="background:var(--earth)"></i>% Earth in view</span></div></div>
+    <div class="months" id="months"></div>
+  </section>
+
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-top:20px" id="stats"></div>
+  <footer class="credits" id="credits"></footer>
+</main>
+<script type="module" src="js/site.js"></script>
+</body>
+</html>
