@@ -1,5 +1,5 @@
 // landing.js — the home page: hero map with real site positions, top sites, key facts, mission skyline.
-import { $, $$, esc, store, LOGO, countUp, revealOnScroll, fmtPct, fmtNum, fmtLat, fmtLon, isoMin, parseIsoUTC, shortName, thumbUrl, yearSummary } from './ui.js';
+import { autoHideBar, $, $$, esc, store, LOGO, countUp, revealOnScroll, fmtPct, fmtNum, fmtLat, fmtLon, isoMin, parseIsoUTC, shortName, thumbUrl, yearSummary } from './ui.js';
 import { loadSites, ephemRange, dataUrl, mapMeta } from './data.js';
 import { prepareSite, statusAt, series, VISIBLE } from './engine.js';
 import { toPolarXY } from './geo.js';
@@ -19,6 +19,7 @@ const TOP = [
 
 $('#logo').innerHTML = LOGO;
 $('#logo').title = 'LuminaLuna';
+autoHideBar($('.lnav'), () => $('#lmenu').classList.contains('open'));
 $('#burger').onclick = () => $('#lmenu').classList.toggle('open');
 
 // ------------------------------------------------------------------ check-a-site form

@@ -86,6 +86,7 @@ export async function initShell(page) {
     </div>`;
   if (!$('.backdrop')) document.body.insertAdjacentHTML('afterbegin', '<div class="backdrop" aria-hidden="true"><i class="bd-stars"></i><i class="bd-dust"></i><i class="bd-moon"></i></div>');
   initTheme();
+  initNavInk();
 
   const c = $('#topbar');
   if (c) {
@@ -138,6 +139,30 @@ function syncControls() {
   const w = $('#whenTxt'); if (w) w.textContent = fmtDate(state.t);
   $$('#mode button').forEach(b => b.classList.toggle('on', (b.dataset.m === 'x') === state.expert));
 }
+// ------------------------------------------------------------------ top bar: sliding pill + underline
+function initNavInk() {
+  const nav = $('#sidebar .nav'); if (!nav) return;
+  nav.insertAdjacentHTML('afterbegin', '<span class="nav-ink" aria-hidden="true"></span><span class="nav-line" aria-hidden="true"></span>');
+  const ink = $('.nav-ink', nav), line = $('.nav-line', nav), links = $$('a', nav);
+  const place = (el, a, inset = 0) => { if (!a) { el.style.opacity = 0; return; } el.style.opacity = 1; el.style.left = `${a.offsetLeft + inset}px`; el.style.width = `${a.offsetWidth - 2 * inset}px`; };
+  const cur = () => $('a.on', nav);
+  const rest = () => { place(ink, cur()); links.forEach(l => l.classList.remove('hot')); };
+  links.forEach(a => {
+    a.addEventListener('mouseenter', () => { place(ink, a); links.forEach(l => l.classList.toggle('hot', l === a)); });
+    a.addEventListener('focus', () => place(ink, a));
+  });
+  nav.addEventListener('mouseleave', rest);
+  nav.addEventListener('focusout', rest);
+  const layout = () => { rest(); place(line, cur(), 18); };
+  // start the pill at zero width in the centre of the current tab, then let it grow
+  const c = cur();
+  if (c) { ink.style.transition = 'none'; line.style.transition = 'none'; ink.style.left = line.style.left = `${c.offsetLeft + c.offsetWidth / 2}px`; ink.style.width = line.style.width = '0px'; ink.offsetWidth; ink.style.transition = line.style.transition = ''; }
+  requestAnimationFrame(() => requestAnimationFrame(layout));
+  nav.classList.add('ready');
+  new ResizeObserver(layout).observe(nav);
+  document.fonts?.ready.then(layout);
+}
+
 // ------------------------------------------------------------------ light / dark
 const systemTheme = () => { try { return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; } catch { return 'dark'; } };
 export const currentTheme = () => document.documentElement.dataset.theme || systemTheme();

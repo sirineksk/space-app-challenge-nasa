@@ -343,3 +343,8 @@ footer.credits { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(
 [data-theme="dark"] .backdrop { background: url(../assets/bg-pages.webp) center / cover no-repeat; }
 [data-theme="dark"] .bd-stars, [data-theme="dark"] .bd-dust { display: none; }
 [data-theme="dark"] .sidebar { background: linear-gradient(rgba(4,7,14,.25), rgba(4,7,14,.45)), url(../assets/header-pages.webp) center / cover no-repeat; }
+
+/* top bar hides while scrolling down, comes back when scrolling up */
+.sidebar { transition: top .35s cubic-bezier(.2,.8,.2,1); }
+.sidebar.bar-hidden { top: -110px; }
+@media (prefers-reduced-motion: reduce) { .sidebar { transition: none; } }

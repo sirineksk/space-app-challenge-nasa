@@ -231,13 +231,11 @@ body.landing::before { background: linear-gradient(180deg, rgba(3,5,10,.08), rgb
 .team .member p { max-width: 30ch; }
 @media (max-width: 700px) { .lnav .brand { margin-left: 0; } }
 
-/* v6: About us = name in a circle, compact cards */
-#about .team { display: flex; flex-wrap: wrap; justify-content: center; gap: 26px; max-width: none; }
-.team .member { width: auto; min-height: 0; padding: 26px; display: grid; place-items: center; background-size: auto, 300%; }
-.team .member:hover { background-size: auto, 340%; }
-.namering { width: 150px; height: 150px; border-radius: 50%; display: grid; place-items: center; padding: 3px;
-  background: linear-gradient(135deg, var(--sun), var(--earth)); transition: transform .5s cubic-bezier(.2,.8,.2,1.3), box-shadow .4s ease; }
-.namering b { width: 100%; height: 100%; border-radius: 50%; display: grid; place-items: center; background: rgba(6,10,20,.82);
-  font: 600 25px var(--serif); color: var(--text); }
-.team .member:hover .namering { transform: rotate(-6deg) scale(1.08); box-shadow: 0 0 34px rgba(87,184,232,.5); }
-@media (max-width: 700px) { .namering { width: 120px; height: 120px; } .namering b { font-size: 21px; } #about .team { gap: 16px; } }
+/* v6: name changes colour on hover */
+.team .member b { transition: color .3s ease; }
+.team .member:hover b { color: var(--sun); }
+
+/* top bar hides while scrolling down, comes back when scrolling up */
+.lnav { transition: top .35s cubic-bezier(.2,.8,.2,1); }
+.lnav.bar-hidden { top: -110px; }
+@media (prefers-reduced-motion: reduce) { .lnav { transition: none; } }
