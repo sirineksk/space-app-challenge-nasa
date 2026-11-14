@@ -2,7 +2,7 @@
 .landing .wrap { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
 .lnav { position: sticky; top: 0; z-index: 30; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px; height: 88px;
   padding: 0 max(28px, calc((100vw - 1200px) / 2 + 28px));
-  background: rgba(5,8,15,.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  background: linear-gradient(rgba(3,5,10,.35), rgba(3,5,10,.55)), url(../assets/header-landing.webp) center / cover no-repeat; border-bottom: 1px solid var(--line); }
 .lnav .brand { padding: 0; height: auto; display: flex !important; justify-self: start; border-radius: 50%; }
 .lnav .emblem { width: 68px; height: 68px; box-shadow: 0 0 0 1px var(--line2); transition: transform .5s cubic-bezier(.2,.8,.2,1.2), box-shadow .4s ease; }
 .lnav .brand:hover .emblem { transform: rotate(-12deg) scale(1.07); box-shadow: 0 0 0 1px var(--line2), 0 0 26px 3px rgba(87,184,232,.4); }
