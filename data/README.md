@@ -43,7 +43,8 @@ azimuth and elevation at a site, use `lunar_geometry.az_el_deg(lat, lon, height_
 | `blocker_distance_km` | how far away the highest terrain is, for each azimuth |
 | `ground_height_m` | LOLA height of the site (m above 1737.4 km) |
 | `observer_height_m` | panel / antenna height above ground (2 m) |
-| `terrain` | which maps were used, or "not modelled" for non-polar sites |
+| `terrain` | which maps were used, or "not modelled" for sites north of 60°S |
+| `snapped_m`, `slope_deg`, `catalog_lat_deg`, `catalog_lon_deg` | only for region centers: a center can sit on a steep slope, so the lander is placed on the highest ground with slope < 5° within 1 km. These give the distance moved, the slope there, and the original catalog point. Landed sites are never moved. |
 
 A body is **visible** when its elevation is above `horizon_deg` at its azimuth
 (interpolate between the 0.5° steps).

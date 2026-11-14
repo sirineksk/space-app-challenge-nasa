@@ -28,6 +28,17 @@ we use DE421.
 - A synthetic 2 km block 50 km away gives the expected angle, about 1.5°, and
   the correct blocker distance.
 
+## First illumination results (2026, 2 m mast)
+
+The best-known high-illumination spots near the pole come out as the best lit
+in our catalog: Shackleton rim 85%, de Gerlache rim 82%, the peak near
+Shackleton (Chang'e 7 target) 81%. Malapert Massif sees Earth 99% of the
+time, as expected for a mountain facing the nearside. The far-side Chang'e 4
+and 6 sites never see Earth.
+
+Adding the 240 m map (mountains 300+ km away) changed no polar result: the
+lunar curve hides such distant terrain.
+
 ## Still to do
 
 - Compare `site_summary` "% of time lit" at classic sites (e.g. Shackleton rim)
