@@ -8,7 +8,7 @@
 <link rel="icon" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/landing-base.css">
 <link rel="stylesheet" href="css/landing.css">
 </head>
 <body class="landing">
@@ -40,6 +40,7 @@
     </div>
     <div class="hero-map">
       <div class="disc" id="disc"></div>
+      <figure class="hero-photo"><img src="assets/photos/lander-earth.webp" alt="Illustration of a lander and a rover on the lunar surface with Earth in the sky" width="512" height="279"></figure>
       <a class="play" id="playLink" href="site.html?id=shackleton_rim_sr1&play=1">
         <span class="playbtn"><span class="ms" style="font-size:16px">play_arrow</span></span>
         <span><b>Watch the Sun circle the horizon</b><br><span class="muted">360° simulation at Shackleton rim</span></span>
@@ -63,7 +64,7 @@
         <button class="iconbtn" id="kNext" aria-label="Next site"><span class="ms" style="font-size:15px">chevron_right</span></button></div>
     </div>
     <div class="keyfacts">
-      <div class="kimg" id="kImg"><div class="cap"><span class="label sun">Terrain</span><br>NASA LOLA · 80 m per pixel</div></div>
+      <div class="kimg" id="kImg" style="background-image:url(assets/photos/lander-sun.webp);background-position:80% center"><div class="cap"><span class="label sun">Illustration</span><br>A lander on a crater rim at the south pole</div></div>
       <div class="kgrid" id="kGrid"></div>
     </div>
   </section>
@@ -76,6 +77,7 @@
       <p class="muted">By combining NASA LOLA laser topography with JPL planetary ephemerides, LUMINALUNA helps mission planners find sites with the most sunlight and the most time in direct radio contact with Earth.</p>
     </div>
     <div class="card">
+      <img class="mimg" src="assets/photos/mission-diagram.webp" alt="Illustration of the Sun and Earth paths above a 360 degree horizon" width="512" height="279" loading="lazy">
       <div class="card-head" style="margin-bottom:8px"><span class="label">Horizon · 360° around Shackleton rim</span><span class="label sun" id="mSun"></span></div>
       <div id="mSky"></div>
       <div class="note" style="margin-top:6px">The real skyline from NASA terrain, with the Sun's path over the next 30 days.</div>
@@ -85,6 +87,7 @@
   <!-- about -->
   <section class="wrap" id="about">
     <h2 class="sec" style="text-align:center">About us</h2>
+    <p class="about-lead">We are a team of four who built LuminaLuna for the NASA Space Apps Challenge 2026, so anyone can see in seconds which spots near the lunar south pole get sunlight and a view of Earth.</p>
     <div class="team">
       <div class="card reveal"><b>Sirine</b><span class="earth">Data &amp; pipeline</span></div>
       <div class="card reveal"><b>Hana</b><span class="earth">Backend</span></div>

@@ -82,7 +82,7 @@ function renderCols(cols) {
   if (!cols.length) { el.innerHTML = `<div class="card loading" style="grid-column:1/-1">No sites yet. Use “+ Add site”, or “Add to compare” on Explore.</div>`; $('#metrics').innerHTML = ''; return; }
   el.innerHTML = cols.map((c, i) => `<div class="sitecard">
       <div class="thumb" style="background-image:url(${thumbUrl(c.site)})"></div>
-      <span class="lab">${mode === 'sites' ? `SITE 0${i + 1}` : c.title.toUpperCase()}</span>
+      <span class="lab">${mode === 'sites' ? `Site ${i + 1}` : c.title}</span>
       ${mode === 'sites' ? `<button class="x" data-rm="${esc(c.key)}" title="Remove"><span class="ms" style="font-size:14px">close</span></button>` : ''}
       <div class="body"><a class="n" href="${href('site', siteParams(c.site))}">${esc(mode === 'sites' ? c.title : (c.site.custom ? 'Custom point' : shortName(c.site)))}</a>
         <div class="note" style="margin-top:2px">${mode === 'sites' ? `${fmtCoords(c.site)}${c.site.terrain ? ` · ${fmtNum(c.site.ground_m)} m` : ''}` : fmtDate(c.t)}</div></div></div>`).join('');
@@ -99,7 +99,7 @@ function renderCols(cols) {
       <h3><span class="ms ${col}" style="font-size:16px">${icons[k]}</span>${label}</h3>
       <div class="cols4" style="--n:${Math.max(cols.length, 2)};gap:10px">${cols.map(c => {
         const win = best[k] != null && c.m[k] === best[k];
-        return `<div class="cell ${win ? 'best' : ''}"><div style="min-width:0"><div class="v ${win ? col : ''}">${f(c.m[k])}</div><div class="s">${esc(c.title)}</div></div>${win ? '<span class="badge">Best</span>' : ''}</div>`;
+        return `<div class="cell ${win ? 'best' : ''}"><div class="v ${win ? col : ''}">${f(c.m[k])}</div><div class="s">${esc(c.title)}</div>${win ? '<span class="badge">Best</span>' : ''}</div>`;
       }).join('')}</div></div>`).join('');
 }
 
@@ -108,11 +108,11 @@ function renderTimeline(cols) {
   if (mode === 'sites') {
     const lw = el.clientWidth < 600 ? 110 : 180;
     el.innerHTML = cols.length ? timelineSVG(cols.map((c, i) => ({ label: `${i + 1}. ${c.title}`, sub: `Sun ${fmtPct(c.m.sunPct, 0)} · Earth ${fmtPct(c.m.earthPct, 0)}`, series: c.ser })),
-      { t0: cols[0].ser.t0, hours: DAYS * 24, now: state.t, width: el.clientWidth, labelW: lw }) : '';
+      { t0: cols[0].ser.t0, hours: DAYS * 24, now: state.t, width: el.clientWidth, labelW: lw, stacked: el.clientWidth < 600 }) : '';
     $('#tlTitle').textContent = `30-Day Timeline (${fmtDay(state.t)} – ${fmtDay(state.t + (DAYS * 24 - 1) * HOUR)} ${new Date(state.t + DAYS * DAY).getUTCFullYear()})`;
   } else {
     el.innerHTML = cols.map(c => timelineSVG([{ label: c.title, sub: `Sun ${fmtPct(c.m.sunPct, 0)} · Earth ${fmtPct(c.m.earthPct, 0)}`, series: c.ser }],
-        { t0: c.ser.t0, hours: DAYS * 24, now: c.t, width: el.clientWidth, labelW: el.clientWidth < 600 ? 110 : 180 })).join('<div style="height:10px"></div>');
+        { t0: c.ser.t0, hours: DAYS * 24, now: c.t, width: el.clientWidth, labelW: 180, stacked: el.clientWidth < 600 })).join('<div style="height:10px"></div>');
     $('#tlTitle').textContent = '30-Day Timeline (each from its own landing date)';
   }
 }

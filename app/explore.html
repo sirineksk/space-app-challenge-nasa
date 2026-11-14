@@ -3,11 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{var t=JSON.parse(localStorage.getItem('luminaluna.theme')||'null');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){document.documentElement.dataset.theme='dark'}</script>
+<meta name="color-scheme" content="light dark">
 <title>Explore · LUMINALUNA</title>
 <meta name="description" content="Compare lunar south pole landing sites by sunlight and Earth visibility, computed from NASA LOLA terrain and JPL ephemerides.">
 <link rel="icon" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -43,7 +45,7 @@
       <!-- centre -->
       <section class="card mapcard mapcol">
         <div class="card-head">
-          <div><div class="label earth">Projection view</div><h2 style="margin-top:4px">South pole · 80° S – 90° S</h2></div>
+          <div><div class="label">Projection view</div><h2 style="margin-top:4px">South pole · 80° S – 90° S</h2></div>
           <div style="display:flex;gap:8px">
             <div class="seg" id="layer"><button data-l="relief" class="on">Relief</button><button data-l="slope">Slope</button></div>
             <button class="btn ghost sm" id="droppin" title="Test the point at the centre of the view"><span class="ms" style="font-size:15px">pin_drop</span> Drop pin</button>

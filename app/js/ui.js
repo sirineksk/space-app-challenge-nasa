@@ -42,11 +42,11 @@ export const isoMin = ms => new Date(ms).toISOString().slice(0, 16);   // YYYY-M
 export const parseIsoUTC = s => { const t = Date.parse(s.length <= 16 ? s + ':00Z' : s); return Number.isFinite(t) ? t : null; };
 
 // ------------------------------------------------------------------ logo + shell
-export const LOGO = `<img class="emblem" src="${new URL('../assets/emblem.png', import.meta.url).href}" alt="LuminaLuna emblem" width="46" height="46">`;
+export const LOGO = `<img class="emblem" src="${new URL('../assets/emblem.png', import.meta.url).href}" alt="LuminaLuna" width="40" height="40">`;
 
 const PAGES = [
   ['explore', 'Explore', 'explore'],
-  ['site', 'Site detail', 'radar'],
+  ['site', 'Site detail', 'radar', 'Site'],
   ['compare', 'Compare', 'compare_arrows'],
   ['learn', 'Learn', 'menu_book'],
 ];
@@ -75,26 +75,31 @@ export async function initShell(page) {
 
   const lastSite = store.get('lastSite', null);
   $('#sidebar').innerHTML = `
-    <a class="brand" href="index.html" title="LuminaLuna — home">${LOGO}</a>
-    <nav class="nav">${PAGES.map(([p, label, icon]) => {
+    <a class="brand" href="index.html" title="LuminaLuna home">${LOGO}</a>
+    <nav class="nav" aria-label="Pages">${PAGES.map(([p, label, icon, short]) => {
       const params = p === 'site' && page !== 'site' && lastSite ? lastSite : {};
-      return `<a data-page="${p}" class="${p === page ? 'on' : ''}" href="${p === 'site' && page === 'site' ? '#' : href(p, params)}"><span class="ms">${icon}</span><span>${label}</span></a>`;
+      return `<a data-page="${p}" class="${p === page ? 'on' : ''}" ${p === page ? 'aria-current="page"' : ''} href="${p === 'site' && page === 'site' ? '#' : href(p, params)}"><span class="ms">${icon}</span><span class="lbl-l">${label}</span><span class="lbl-s">${short ?? label}</span></a>`;
     }).join('')}</nav>
-    <div class="side-foot">NASA Space Apps 2026<br>LOLA 80 m · JPL DE421</div>`;
+    <div class="tools">
+      <div class="seg" id="mode" role="group" aria-label="Detail level"><button data-m="b">Beginner</button><button data-m="x">Expert</button></div>
+      <button class="themebtn" id="theme" aria-label="Switch light or dark theme"></button>
+    </div>`;
+  if (!$('.backdrop')) document.body.insertAdjacentHTML('afterbegin', '<div class="backdrop" aria-hidden="true"><i class="bd-stars"></i><i class="bd-dust"></i><i class="bd-moon"></i></div>');
+  initTheme();
 
   const c = $('#topbar');
   if (c) {
     c.insertAdjacentHTML('afterbegin', `
-      <div class="when" title="All times are UTC. Data covers ${new Date(state.range.startMs).getUTCFullYear()}–${new Date(state.range.endMs).getUTCFullYear()}.">
-        <button class="d1" data-dt="-86400000" title="1 day earlier">−1d</button>
-        <button data-dt="-3600000" title="1 hour earlier"><span class="ms" style="font-size:16px">chevron_left</span></button>
-        <button class="date" id="whenBtn" title="Pick a date (UTC)"><span class="ms" style="font-size:16px">schedule</span><span id="whenTxt"></span></button>
+      <div class="when" role="group" aria-label="Date and time (UTC). Data covers ${new Date(state.range.startMs).getUTCFullYear()} to ${new Date(state.range.endMs).getUTCFullYear()}">
+        <button class="d1" data-dt="-86400000" title="One day earlier">−1 d</button>
+        <button data-dt="-3600000" title="One hour earlier" aria-label="One hour earlier"><span class="ms" style="font-size:18px">chevron_left</span></button>
+        <button class="date" id="whenBtn" title="Pick a date and time (UTC)"><span class="ms" style="font-size:16px">schedule</span><span id="whenTxt"></span></button>
         <input type="datetime-local" id="when" step="60" tabindex="-1" aria-hidden="true">
-        <button data-dt="3600000" title="1 hour later"><span class="ms" style="font-size:16px">chevron_right</span></button>
-        <button class="d1" data-dt="86400000" title="1 day later">+1d</button>
+        <button data-dt="3600000" title="One hour later" aria-label="One hour later"><span class="ms" style="font-size:18px">chevron_right</span></button>
+        <button class="d1" data-dt="86400000" title="One day later">+1 d</button>
+        <span class="sep"></span>
         <button class="now" data-now title="Back to the current time">Now</button>
-      </div>
-      <div class="seg" id="mode"><button data-m="b">Beginner</button><button data-m="x">Expert</button></div>`);
+      </div>`);
     const inp = $('#when');
     inp.min = isoMin(state.range.startMs); inp.max = isoMin(state.range.endMs);
     inp.addEventListener('change', () => { const t = parseIsoUTC(inp.value); if (t != null) setTime(t); });
@@ -106,12 +111,12 @@ export async function initShell(page) {
     });
     $$('.when button[data-dt]').forEach(b => b.addEventListener('click', () => setTime(state.t + Number(b.dataset.dt))));
     $('.when button[data-now]').addEventListener('click', () => setTime(Date.now(), true));
-    $$('#mode button').forEach(b => b.addEventListener('click', () => setExpert(b.dataset.m === 'x')));
-    syncControls();
   }
+  $$('#mode button').forEach(b => b.addEventListener('click', () => setExpert(b.dataset.m === 'x')));
+  syncControls();
   const cr = $('#credits');
   if (cr) cr.innerHTML = `<span>Terrain: NASA LRO LOLA · Ephemeris: JPL DE421 · validated against JPL Horizons</span>
-    <span>LUMINALUNA · ECO-PATH — NASA Space Apps Challenge 2026</span>`;
+    <span>LuminaLuna, NASA Space Apps Challenge 2026</span>`;
   // keep "now" ticking when the user hasn't picked a date
   setInterval(() => { if (state.live) { state.t = clampT(Date.now()); syncControls(); emit({ tick: true }); } }, 60000);
 }
@@ -133,6 +138,22 @@ function syncControls() {
   const w = $('#whenTxt'); if (w) w.textContent = fmtDate(state.t);
   $$('#mode button').forEach(b => b.classList.toggle('on', (b.dataset.m === 'x') === state.expert));
 }
+// ------------------------------------------------------------------ light / dark
+const systemTheme = () => { try { return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; } catch { return 'dark'; } };
+export const currentTheme = () => document.documentElement.dataset.theme || systemTheme();
+export function applyTheme(t) {
+  document.documentElement.dataset.theme = t;
+  const b = document.getElementById('theme');
+  if (b) { b.innerHTML = ic(t === 'dark' ? 'light_mode' : 'dark_mode', 18); b.title = t === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'; }
+  document.dispatchEvent(new CustomEvent('themechange', { detail: t }));
+}
+export function initTheme() {
+  applyTheme(store.get('theme', null) ?? systemTheme());
+  const b = document.getElementById('theme');
+  if (b) b.onclick = () => { const t = currentTheme() === 'dark' ? 'light' : 'dark'; store.set('theme', t); applyTheme(t); };
+  try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (!store.get('theme', null)) applyTheme(systemTheme()); }); } catch { /* old browsers */ }
+}
+
 export function setExpert(on) {
   state.expert = on; store.set('expert', on);
   document.body.classList.toggle('expert', on); syncControls();
@@ -200,8 +221,10 @@ export function verdict(m) {
  * rows: [{label, sub, series}] — each row draws a Sun band and an Earth band.
  * Returns an SVG string sized for `width` px.
  */
-export function timelineSVG(rows, { t0, hours, now, width, labelW = 150, showPower = false }) {
-  const W = Math.max(320, width), x0 = labelW, x1 = W - 10, bandH = 14, gap = 5, rowH = bandH * 2 + gap + 18, top = 8;
+export function timelineSVG(rows, { t0, hours, now, width, labelW = 150, showPower = false, stacked = false }) {
+  if (stacked) labelW = 0;
+  const lab = stacked ? 20 : 0;
+  const W = Math.max(280, width), x0 = labelW, x1 = W - (stacked ? 2 : 10), bandH = 14, gap = 5, rowH = bandH * 2 + gap + 18 + lab, top = 8;
   const H = top + rows.length * rowH + 24 + (showPower ? 70 : 0);
   const X = t => x0 + (t - t0) / (hours * HOUR) * (x1 - x0);
   let g = '';
@@ -212,21 +235,23 @@ export function timelineSVG(rows, { t0, hours, now, width, labelW = 150, showPow
     const x = X(d), dom = new Date(d).getUTCDate();
     const lab = (dom === 1 || dom % 5 === 0) && x - lastLab > 42 && x < x1 - 18;
     if (lab) lastLab = x;
-    g += `<line x1="${x}" x2="${x}" y1="${top}" y2="${H - 22}" stroke="#172235" stroke-width="${lab ? 1 : .5}" ${lab ? '' : 'stroke-dasharray="2 3"'}/>`;
-    if (lab) g += `<text x="${x}" y="${H - 6}" fill="#94A3B8" font-size="10" font-family="IBM Plex Mono" text-anchor="middle">${fmtDay(d)}</text>`;
+    g += `<line x1="${x}" x2="${x}" y1="${top}" y2="${H - 22}" stroke="var(--plot-grid)" stroke-width="${lab ? 1 : .5}" ${lab ? '' : 'stroke-dasharray="2 3"'}/>`;
+    if (lab) g += `<text x="${x}" y="${H - 6}" fill="var(--ink-2)" font-size="10"  text-anchor="middle">${fmtDay(d)}</text>`;
   }
   rows.forEach((r, i) => {
-    const y = top + i * rowH, s = r.series;
-    if (labelW > 0 && r.bandLabels) g += `<text x="0" y="${y + 11}" fill="#F2B544" font-size="11" font-family="IBM Plex Mono">${esc(r.bandLabels[0])}</text>
-      <text x="0" y="${y + bandH + gap + 11}" fill="#57B8E8" font-size="11" font-family="IBM Plex Mono">${esc(r.bandLabels[1])}</text>`;
-    else if (labelW > 0) g += `<text x="0" y="${y + 13}" fill="#E8EDF4" font-size="14" font-family="Source Serif 4, Georgia, serif" font-weight="600">${esc(r.label)}</text>
-      <text x="0" y="${y + 29}" fill="#94A3B8" font-size="10" font-family="IBM Plex Mono">${esc(r.sub ?? '')}</text>`;
-    g += `<rect x="${x0}" y="${y}" width="${x1 - x0}" height="${bandH}" rx="3" fill="#0A1120"/>`;
-    g += `<rect x="${x0}" y="${y + bandH + gap}" width="${x1 - x0}" height="${bandH}" rx="3" fill="#0A1120"/>`;
+    const y0r = top + i * rowH, s = r.series, y = y0r + lab;
+    if (stacked) g += `<text x="0" y="${y0r + 11}" fill="var(--ink)" font-size="12.5"  font-weight="600">${esc(r.label ?? '')}</text>
+      <text x="${x1}" y="${y0r + 11}" fill="var(--ink-2)" font-size="10.5"  font-weight="600" text-anchor="end">${esc(r.sub ?? (r.bandLabels ? r.bandLabels.join(' · ') : ''))}</text>`;
+    if (labelW > 0 && r.bandLabels) g += `<text x="0" y="${y + 11}" fill="var(--sun-fill)" font-size="11" >${esc(r.bandLabels[0])}</text>
+      <text x="0" y="${y + bandH + gap + 11}" fill="var(--earth-fill)" font-size="11" >${esc(r.bandLabels[1])}</text>`;
+    else if (labelW > 0) g += `<text x="0" y="${y + 13}" fill="var(--ink)" font-size="14" font-weight="600">${esc(r.label)}</text>
+      <text x="0" y="${y + 29}" fill="var(--ink-2)" font-size="10" >${esc(r.sub ?? '')}</text>`;
+    g += `<rect x="${x0}" y="${y}" width="${x1 - x0}" height="${bandH}" rx="3" fill="var(--plot-bg)"/>`;
+    g += `<rect x="${x0}" y="${y + bandH + gap}" width="${x1 - x0}" height="${bandH}" rx="3" fill="var(--plot-bg)"/>`;
     for (const [a, b] of runs(s.n, k => s.valid[k] && s.sunFrac[k] >= VISIBLE))
-      g += `<rect x="${X(s.t0 + a * HOUR)}" y="${y}" width="${Math.max(1, X(s.t0 + b * HOUR) - X(s.t0 + a * HOUR))}" height="${bandH}" fill="#F2B544"><title>Sunlight ${fmtDayHM(s.t0 + a * HOUR)} → ${fmtDayHM(s.t0 + b * HOUR)}</title></rect>`;
+      g += `<rect x="${X(s.t0 + a * HOUR)}" y="${y}" width="${Math.max(1, X(s.t0 + b * HOUR) - X(s.t0 + a * HOUR))}" height="${bandH}" fill="var(--sun-fill)"><title>Sunlight ${fmtDayHM(s.t0 + a * HOUR)} → ${fmtDayHM(s.t0 + b * HOUR)}</title></rect>`;
     for (const [a, b] of runs(s.n, k => s.valid[k] && s.earthFrac[k] >= VISIBLE))
-      g += `<rect x="${X(s.t0 + a * HOUR)}" y="${y + bandH + gap}" width="${Math.max(1, X(s.t0 + b * HOUR) - X(s.t0 + a * HOUR))}" height="${bandH}" fill="#57B8E8"><title>Earth in view ${fmtDayHM(s.t0 + a * HOUR)} → ${fmtDayHM(s.t0 + b * HOUR)}</title></rect>`;
+      g += `<rect x="${X(s.t0 + a * HOUR)}" y="${y + bandH + gap}" width="${Math.max(1, X(s.t0 + b * HOUR) - X(s.t0 + a * HOUR))}" height="${bandH}" fill="var(--earth-fill)"><title>Earth in view ${fmtDayHM(s.t0 + a * HOUR)} → ${fmtDayHM(s.t0 + b * HOUR)}</title></rect>`;
     for (const [a, b] of runs(s.n, k => !s.valid[k]))
       g += `<rect x="${X(s.t0 + a * HOUR)}" y="${y}" width="${X(s.t0 + b * HOUR) - X(s.t0 + a * HOUR)}" height="${bandH * 2 + gap}" fill="url(#nodata)"/>`;
   });
@@ -236,17 +261,17 @@ export function timelineSVG(rows, { t0, hours, now, width, labelW = 150, showPow
     max = Math.max(max, 1);
     let d = '';
     for (let k = 0; k < s.n; k++) if (s.valid[k]) d += `${d ? 'L' : 'M'}${X(s.t0 + (k + .5) * HOUR).toFixed(1)},${(y0 + h - s.power[k] / max * h).toFixed(1)}`;
-    g += `<text x="${labelW ? 0 : x0}" y="${y0 + 10}" fill="#94A3B8" font-size="10" font-family="IBM Plex Mono">${labelW ? 'Power (W)' : ''}</text>
-      <text x="${labelW ? 0 : x0}" y="${y0 + 24}" fill="#5E6E85" font-size="10" font-family="IBM Plex Mono">${labelW ? 'max ' + Math.round(max) : ''}</text>
-      <path d="${d}" fill="none" stroke="#F2B544" stroke-width="1.3" opacity=".9"/>`;
+    g += `<text x="${labelW ? 0 : x0}" y="${y0 + 10}" fill="var(--ink-2)" font-size="10" >${labelW ? 'Power (W)' : ''}</text>
+      <text x="${labelW ? 0 : x0}" y="${y0 + 24}" fill="var(--ink-3)" font-size="10" >${labelW ? 'max ' + Math.round(max) : ''}</text>
+      <path d="${d}" fill="none" stroke="var(--sun-fill)" stroke-width="1.3" opacity=".9"/>`;
   }
   if (now >= t0 && now <= t0 + hours * HOUR) {
     const x = X(now);
-    g += `<line x1="${x}" x2="${x}" y1="${top - 4}" y2="${H - 20}" stroke="#E8EDF4" stroke-width="1.5"/>
-      <circle cx="${x}" cy="${top - 4}" r="3" fill="#E8EDF4"/>`;
+    g += `<line x1="${x}" x2="${x}" y1="${top - 4}" y2="${H - 20}" stroke="var(--ink)" stroke-width="1.5"/>
+      <circle cx="${x}" cy="${top - 4}" r="3" fill="var(--ink)"/>`;
   }
   return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" data-x0="${x0}" data-x1="${x1}" style="cursor:pointer">
-    <defs><pattern id="nodata" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#0B1220"/><line x1="0" y1="0" x2="0" y2="6" stroke="#223147" stroke-width="2"/></pattern></defs>${g}</svg>`;
+    <defs><pattern id="nodata" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--surface-2)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--line)" stroke-width="2"/></pattern></defs>${g}</svg>`;
 }
 /** Click on a timeline -> time (ms). */
 export function timelinePick(svg, ev, t0, hours) {
@@ -276,7 +301,7 @@ const P = {
   settings_input_antenna: '<path d="M12 13v8M8.5 21h7M8 9.5a5.5 5.5 0 0 1 8 0M5.2 6.7a9.5 9.5 0 0 1 13.6 0"/><circle cx="12" cy="12.5" r="1.3" fill="currentColor"/>',
   print: '<path d="M7 9V4h10v5M7 17H4.5V9.5h15V17H17M7 14h10v6H7z"/>',
   bolt: '<path d="M13 3L5 13.5h6L10 21l8-10.5h-6z"/>', dark_mode: '<path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5z"/>',
-  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>', schedule: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>', schedule: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>', light_mode: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>',
   landscape: '<path d="M3 19l6-9 4 6 3-4 5 7z"/>', menu: '<path d="M4 7h16M4 12h16M4 17h16"/>', battery: '<rect x="3" y="7" width="16" height="10" rx="2"/><path d="M21 10.5v3"/>', swap_horiz: '<path d="M4 9h15M15 5l4 4-4 4M20 15H5M9 11l-4 4 4 4"/>',
 };
 export const ic = (name, size = 18) => `<svg class="ic" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[name] ?? P.info}</svg>`;
@@ -322,6 +347,4 @@ export function revealOnScroll(root = document) {
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
   els.forEach(e => io.observe(e));
 }
-// cards rise in when a page opens (only on first load, so re-renders don't flicker)
-document.body.classList.add('enter');
-setTimeout(() => document.body.classList.remove('enter'), 1800);
+

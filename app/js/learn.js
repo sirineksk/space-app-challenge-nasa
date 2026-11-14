@@ -23,7 +23,7 @@ function strip() {
   el.innerHTML = timelineSVG([
     { label: 'Shackleton rim', sub: `☀ ${fmtPct(ya.sunPct, 0)} of ${Y}`, series: SA },
     { label: 'Exact south pole', sub: `☀ ${fmtPct(yb.sunPct, 0)} of ${Y}`, series: SB },
-  ], { t0, hours: N, now: t0 + (+$('#exSlider').value) * HOUR, width: el.clientWidth, labelW: 150 });
+  ], { t0, hours: N, now: t0 + (+$('#exSlider').value) * HOUR, width: el.clientWidth, labelW: 150, stacked: el.clientWidth < 600 });
   // day ticks are too dense for a year: keep month starts only
   el.querySelectorAll('text').forEach(t => { if (/^\d+ \w+$/.test(t.textContent) && !t.textContent.startsWith('1 ')) t.remove(); });
 }
@@ -38,14 +38,14 @@ function miniHorizon(site, s, k) {
   for (let a = -span / 2; a <= span / 2; a += .5) d += `L${X(az + a).toFixed(1)},${Yp(Math.max(lo, horizonAt(site.skyline, az + a))).toFixed(1)}`;
   d += `L${W},${H}Z`;
   const r = Math.max(6, .267 / (hi - lo) * H);
-  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;border-radius:10px;border:1px solid #1F2D44;background:#0A1120">
-    <defs><linearGradient id="tg${site.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22324C"/><stop offset="1" stop-color="#0D1524"/></linearGradient></defs>
-    <line x1="0" x2="${W}" y1="${Yp(0)}" y2="${Yp(0)}" stroke="#2B3B55" stroke-dasharray="2 4"/>
-    <text x="8" y="${Yp(0) - 5}" fill="#56637A" font-size="10" font-family="Inter" font-weight="600">0° HORIZON</text>
-    <circle cx="${X(az)}" cy="${Yp(el)}" r="${r + 9}" fill="#F2B544" fill-opacity=".12"/>
-    <circle cx="${X(az)}" cy="${Yp(el)}" r="${r}" fill="#F2B544"/>
-    <path d="${d}" fill="url(#tg${site.id})" stroke="#57B8E8" stroke-opacity=".5"/>
-    <text x="${W / 2}" y="${H - 8}" fill="#8C98AB" font-size="10" font-family="Inter" font-weight="600" text-anchor="middle">LOOKING ${dirWord(compass(az)).toUpperCase()}, TOWARD THE SUN · ±${span / 2}°</text>
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;border-radius:10px;border:1px solid var(--line);background:var(--plot-bg)">
+    <defs><linearGradient id="tg${site.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--terrain-top)"/><stop offset="1" stop-color="var(--terrain-bot)"/></linearGradient></defs>
+    <line x1="0" x2="${W}" y1="${Yp(0)}" y2="${Yp(0)}" stroke="var(--line-2)" stroke-dasharray="2 4"/>
+    <text x="8" y="${Yp(0) - 5}" fill="var(--ink-3)" font-size="10" font-weight="600">0° horizon</text>
+    <circle cx="${X(az)}" cy="${Yp(el)}" r="${r + 9}" fill="var(--sun-fill)" fill-opacity=".12"/>
+    <circle cx="${X(az)}" cy="${Yp(el)}" r="${r}" fill="var(--sun-fill)"/>
+    <path d="${d}" fill="url(#tg${site.id})" stroke="var(--terrain-line)" stroke-opacity=".55"/>
+    <text x="${W / 2}" y="${H - 8}" fill="var(--ink-2)" font-size="10" font-weight="600" text-anchor="middle">Looking ${dirWord(compass(az))}, toward the Sun (±${span / 2}°)</text>
   </svg>`;
 }
 

@@ -63,7 +63,7 @@ svg.innerHTML = `<defs><clipPath id="disk"><circle r="${HW}"/></clipPath></defs>
     <image href="${dataUrl('map/relief_80S.jpg')}" x="${-HW}" y="${-HW}" width="${2 * HW}" height="${2 * HW}" preserveAspectRatio="none"/>
     <image id="slopeimg" href="${dataUrl('map/slope_80S.png')}" x="${-HW}" y="${-HW}" width="${2 * HW}" height="${2 * HW}" preserveAspectRatio="none" style="display:none"/>
   </g>
-  <g fill="none" stroke="#57B8E8" stroke-opacity=".4">
+  <g fill="none" stroke="#9FC2FF" stroke-opacity=".45">
     ${RINGS.map(l => `<circle r="${ringR(-l)}" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"/>`).join('')}
     ${[0, 90, 180, 270].map(lon => { const [x, y] = toPolarXY(-80, lon); return `<line x2="${x / 1000}" y2="${-y / 1000}" stroke-opacity=".5" stroke-dasharray="2 5" vector-effect="non-scaling-stroke"/>`; }).join('')}
   </g><g id="labels"></g><g id="marks"></g>`;
@@ -79,7 +79,7 @@ function applyView() {
 }
 function drawMarks() {
   const px = kmPerPx(), zoomed = view.w < 2 * HW / 3.5, fs = 10.5 * px;
-  const txt = (x, y, t, anchor = 'start') => `<text x="${x}" y="${y}" font-size="${fs}" fill="#B9C3D3" text-anchor="${anchor}" font-family="Inter" font-weight="600" paint-order="stroke" stroke="#05080F" stroke-width="${2.5 * px}">${t}</text>`;
+  const txt = (x, y, t, anchor = 'start') => `<text x="${x}" y="${y}" font-size="${fs}" fill="#B9C3D3" text-anchor="${anchor}" font-weight="600" paint-order="stroke" stroke="#05080F" stroke-width="${2.5 * px}">${t}</text>`;
   let lab = RINGS.map(l => txt(4 * px, -ringR(-l) - 4 * px, `${l}° S`)).join('');
   lab += txt(...toSvg(-80.6, 0), '0°', 'middle') + txt(...toSvg(-80.9, 90), '90° E', 'end') + txt(...toSvg(-80.9, -90), '90° W') + txt(...toSvg(-81, 180), '180°', 'middle');
   lab += `<line x1="${-6 * px}" x2="${6 * px}" stroke="#E6EAF2" stroke-width="${px}"/><line y1="${-6 * px}" y2="${6 * px}" stroke="#E6EAF2" stroke-width="${px}"/>`;
@@ -91,13 +91,13 @@ function drawMarks() {
     const [x, yy] = toSvg(s.lat, s.lon), on = selected?.id === s.id;
     m += `<g class="mk" data-id="${s.id}" transform="translate(${x} ${yy})" style="cursor:pointer">
       <circle r="${r * 2.4}" fill="transparent"/>
-      ${on ? `<circle r="${r * 2.1}" fill="rgba(87,184,232,.15)" stroke="#57B8E8" stroke-width="${1.5 * px}"><animate attributeName="r" values="${r * 1.4};${r * 3};${r * 1.4}" dur="2.4s" repeatCount="indefinite"/><animate attributeName="stroke-opacity" values="1;.1;1" dur="2.4s" repeatCount="indefinite"/></circle>` : ''}
-      <circle r="${r}" fill="${on ? '#57B8E8' : '#E6EAF2'}" stroke="#05080F" stroke-width="${1.5 * px}"/>
+      ${on ? `<circle r="${r * 2.1}" fill="rgba(91,155,255,.18)" stroke="#5B9BFF" stroke-width="${1.5 * px}"><animate attributeName="r" values="${r * 1.4};${r * 3};${r * 1.4}" dur="2.4s" repeatCount="indefinite"/><animate attributeName="stroke-opacity" values="1;.1;1" dur="2.4s" repeatCount="indefinite"/></circle>` : ''}
+      <circle r="${r}" fill="${on ? '#5B9BFF' : '#E6EAF2'}" stroke="#05080F" stroke-width="${1.5 * px}"/>
       ${on || zoomed ? txt(r * 1.8, r * .5, esc(shortName(s))) : ''}</g>`;
   }
   if (selected?.custom) {
     const [x, yy] = toSvg(selected.lat, selected.lon);
-    m += `<g transform="translate(${x} ${yy})"><path d="M0 0 L${-5 * px} ${-12 * px} A${6 * px} ${6 * px} 0 1 1 ${5 * px} ${-12 * px} Z" fill="#F2B544" stroke="#05080F" stroke-width="${px}"/><circle cy="${-15 * px}" r="${2.3 * px}" fill="#05080F"/></g>`;
+    m += `<g transform="translate(${x} ${yy})"><path d="M0 0 L${-5 * px} ${-12 * px} A${6 * px} ${6 * px} 0 1 1 ${5 * px} ${-12 * px} Z" fill="#FFB84D" stroke="#05080F" stroke-width="${px}"/><circle cy="${-15 * px}" r="${2.3 * px}" fill="#05080F"/></g>`;
   }
   $('#marks', svg).innerHTML = m;
 }
@@ -119,7 +119,7 @@ mapEl.addEventListener('pointermove', ev => {
   const g = document.elementsFromPoint(ev.clientX, ev.clientY).find(e => e.closest?.('.mk'))?.closest('.mk');
   if (!g) { tip.classList.add('hidden'); return; }
   const s = sites.find(x => x.id === g.dataset.id), m = yearSummary(s, year()), box = mapEl.parentElement.getBoundingClientRect();
-  tip.innerHTML = `<div class="serif" style="font-weight:600;font-size:14px">${esc(shortName(s))}</div><div class="muted" style="font-size:11px">${fmtCoords(s)} · ${fmtNum(s.ground_m)} m</div>
+  tip.innerHTML = `<div style="font-weight:650;font-size:14px">${esc(shortName(s))}</div><div class="muted" style="font-size:11px">${fmtCoords(s)} · ${fmtNum(s.ground_m)} m</div>
     <div style="display:flex;gap:14px;margin-top:4px;font-weight:600"><span class="sun">${fmtPct(m.sunPct)} Sun</span><span class="earth">${fmtPct(m.earthPct)} Earth</span></div>`;
   tip.style.left = `${ev.clientX - box.left}px`; tip.style.top = `${ev.clientY - box.top}px`;
   tip.classList.remove('hidden');
@@ -200,7 +200,7 @@ async function renderPanel() {
   };
   $('#panel').innerHTML = `
     <section class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center"><span class="label earth">Selected site</span><span class="tag earth">${esc(tagTxt)}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center"><span class="label">Selected site</span><span class="tag earth">${esc(tagTxt)}</span></div>
       <h2 style="font-size:24px;margin:10px 0 4px">${esc(s.custom ? 'Custom point' : shortName(s))}</h2>
       <div class="muted" style="font-size:12.5px">${fmtCoords(s)}${s.terrain ? ` · Elev. ${fmtNum(s.ground_m)} m` : ''}</div>
       <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px;margin-top:16px">
@@ -211,19 +211,19 @@ async function renderPanel() {
     </section>
     <section class="card">
       <div class="label" style="margin-bottom:12px">Key metrics</div>
-      ${row('dark_mode', 'Longest night', `${fmtLong(m.nightH)}<span class="x-only muted"> · ${m.nightH} h</span>`)}
+      <div class="kvs">${row('dark_mode', 'Longest night', `${fmtLong(m.nightH)}<span class="x-only muted"> · ${m.nightH} h</span>`)}
       ${row('settings_input_antenna', 'Longest w/o Earth', `${fmtLong(m.noEarthH)}<span class="x-only muted"> · ${m.noEarthH} h</span>`, 'earth')}
       ${row('bolt', 'Energy per day', `${fmtNum(m.energyWhDay)} Wh`)}
-      ${slope != null ? row('landscape', 'Slope', `${slope.toFixed(1)}°`, slope > 15 ? 'bad' : slope > 10 ? 'sun' : 'ok') : row('landscape', 'Horizon', 'flat (no polar terrain)', 'muted')}
+      ${slope != null ? row('landscape', 'Slope', `${slope.toFixed(1)}°`, slope > 15 ? 'bad' : slope > 10 ? 'sun' : 'ok') : row('landscape', 'Horizon', 'flat (no polar terrain)', 'muted')}</div>
       ${st ? `<div class="label" style="margin:16px 0 10px">Right now</div>${nowRow(true, st.sun)}${nowRow(false, st.earth)}` : ''}
       ${s.custom ? `<p class="note" style="margin:12px 0 0">${esc(s.notes)}</p>` : ''}
       ${s.source ? `<p class="note x-only" style="margin:12px 0 0">Source: ${s.source_url ? `<a href="${esc(s.source_url)}" target="_blank" rel="noopener" style="text-decoration:underline dotted">${esc(s.source)}</a>` : esc(s.source)}${s.snapped_m ? ` · moved ${fmtNum(s.snapped_m)} m to flat high ground` : ''}</p>` : ''}
     </section>
     <div class="stack" style="gap:10px">
-      <a class="btn wide" href="${href('site', siteParams(s))}">Open site detail <span class="ms" style="font-size:16px">arrow_forward</span></a>
+      <a class="btn wide" href="${href('site', siteParams(s))}">Open site detail</a>
       <button class="btn ghost wide" id="addcmp"><span class="ms" style="font-size:16px">add</span> Add to compare</button>
     </div>`;
-  $('#addcmp').onclick = () => { const l = addCompare(siteKey(s)); toast(`Added. Compare has ${l.length} site${l.length > 1 ? 's' : ''}. <a href="${href('compare')}" style="color:var(--earth);text-decoration:underline">Open compare →</a>`, 3500); };
+  $('#addcmp').onclick = () => { const l = addCompare(siteKey(s)); toast(`Added. Compare has ${l.length} site${l.length > 1 ? 's' : ''}. <a href="${href('compare')}" style="color:var(--earth);text-decoration:underline">Open compare</a>`, 3500); };
 }
 
 onTime(() => { renderList(); drawMarks(); if (selected) renderPanel(); });

@@ -29,7 +29,7 @@ const groups = [['artemis3', 'Artemis III candidates'], ['reference', 'Reference
 $('#pick').innerHTML = (site.custom ? `<option value="" selected>Custom point</option>` : '') + groups.map(([g, l]) =>
   `<optgroup label="${l}">${all.filter(s => s.group === g).map(s => `<option value="${s.id}" ${s.id === site.id ? 'selected' : ''}>${esc(shortName(s))}</option>`).join('')}</optgroup>`).join('');
 $('#pick').onchange = e => { if (e.target.value) location.href = href('site', { id: e.target.value }); };
-$('#addcmp').onclick = () => { const l = addCompare(siteKey(site)); toast(`Added. Compare has ${l.length} site${l.length > 1 ? 's' : ''}. <a href="${href('compare')}" style="color:var(--earth);text-decoration:underline">Open compare →</a>`, 3500); };
+$('#addcmp').onclick = () => { const l = addCompare(siteKey(site)); toast(`Added. Compare has ${l.length} site${l.length > 1 ? 's' : ''}. <a href="${href('compare')}" style="color:var(--earth);text-decoration:underline">Open compare</a>`, 3500); };
 
 // ------------------------------------------------------------------ status cards
 let nowPower = 0;
@@ -65,8 +65,9 @@ function statusCard(isSun, b) {
 }
 
 // ------------------------------------------------------------------ skyline panorama
+let panoCentered = false;
 function drawPanorama(st, win) {
-  const el = $('#pano'), W = Math.max(320, el.clientWidth), H = W < 600 ? 220 : 270;
+  const el = $('#pano'), narrow = el.clientWidth < 600, W = narrow ? 980 : Math.max(320, el.clientWidth), H = narrow ? 230 : 270;
   const L = 40, R = 14, T = 12, B = 26;
   const sky = site.skyline;
   let lo = Infinity, hi = -Infinity;
@@ -77,14 +78,14 @@ function drawPanorama(st, win) {
   hi = Math.min(hi, 25) + 1.5; lo = Math.max(lo, -12) - 1;
   const X = az => L + az / 360 * (W - L - R), Y = e => T + (hi - e) / (hi - lo) * (H - T - B);
   const pxDeg = (H - T - B) / (hi - lo);
-  const font = 'font-family="Inter" font-weight="600"';
-  let g = `<rect x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" rx="8" fill="#0A1120"/>`;
+  const font = 'font-weight="600"';
+  let g = `<rect x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" rx="8" fill="var(--plot-bg)"/>`;
   const stepE = hi - lo > 12 ? 5 : hi - lo > 5 ? 2 : 1;
   for (let e = Math.ceil(lo / stepE) * stepE; e <= hi; e += stepE)
-    g += `<line x1="${L}" x2="${W - R}" y1="${Y(e)}" y2="${Y(e)}" stroke="${e === 0 ? '#2B3B55' : '#142033'}" ${e === 0 ? '' : 'stroke-dasharray="2 4"'}/><text x="${L - 6}" y="${Y(e) + 3}" fill="#56637A" font-size="10" ${font} text-anchor="end">${e > 0 ? '+' : ''}${e}°</text>`;
+    g += `<line x1="${L}" x2="${W - R}" y1="${Y(e)}" y2="${Y(e)}" stroke="${e === 0 ? 'var(--line-2)' : 'var(--plot-grid)'}" ${e === 0 ? '' : 'stroke-dasharray="2 4"'}/><text x="${L - 6}" y="${Y(e) + 3}" fill="var(--ink-3)" font-size="10" ${font} text-anchor="end">${e > 0 ? '+' : ''}${e}°</text>`;
   ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N'].forEach((c, i) => {
-    if (W < 520 && i % 2) return;
-    g += `<text x="${X(i * 45)}" y="${H - 8}" fill="#8C98AB" font-size="10" ${font} text-anchor="middle">${i * 45}° ${c}</text>`;
+    if (W < 520 && i % 2) return;  // (phones scroll a wide panorama instead)
+    g += `<text x="${X(i * 45)}" y="${H - 8}" fill="var(--ink-2)" font-size="10" ${font} text-anchor="middle">${i * 45}° ${c}</text>`;
   });
   const path = (azA, elA, visA, color) => {
     let d = '', prev = null, dots = '';
@@ -93,30 +94,32 @@ function drawPanorama(st, win) {
       const x = X(azA[k]), y = Y(elA[k]);
       d += (prev == null || Math.abs(azA[k] - prev) > 180) ? `M${x.toFixed(1)},${y.toFixed(1)}` : `L${x.toFixed(1)},${y.toFixed(1)}`;
       prev = azA[k];
-      if (k % 12 === 0) dots += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.6" fill="${visA[k] >= VISIBLE ? color : '#0A1120'}" stroke="${color}" stroke-width=".7"/>`;
+      if (k % 12 === 0) dots += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.6" fill="${visA[k] >= VISIBLE ? color : 'var(--plot-bg)'}" stroke="${color}" stroke-width=".7"/>`;
     }
     return `<path d="${d}" fill="none" stroke="${color}" stroke-opacity=".35" stroke-width="1.1" stroke-dasharray="3 3"/>${dots}`;
   };
-  g += path(win.sunAz, win.sunEl, win.sunFrac, '#F2B544') + path(win.earthAz, win.earthEl, win.earthFrac, '#57B8E8');
+  g += path(win.sunAz, win.sunEl, win.sunFrac, 'var(--sun-fill)') + path(win.earthAz, win.earthEl, win.earthFrac, 'var(--earth-fill)');
   const earthR = angularRadius(R_EARTH_KM, 384400);
   const tag = (b, color, name) => {
-    const x = X(b.az), y = Y(b.el), t = `${name.toUpperCase()} ${b.az.toFixed(0)}° / ${b.el > 0 ? '+' : ''}${b.el.toFixed(1)}°${b.visible ? '' : ' (hidden)'}`;
-    const w = t.length * 6.2 + 14, tx = Math.min(Math.max(x - w / 2, L + 2), W - R - w - 2);
-    return `<rect x="${tx}" y="${y + 12}" width="${w}" height="18" rx="5" fill="#0D1524" stroke="#1F2D44"/><text x="${tx + w / 2}" y="${y + 24.5}" fill="${color}" font-size="10" ${font} text-anchor="middle">${t}</text>`;
+    const x = X(b.az), y = Y(b.el), t = `${name} ${b.az.toFixed(0)}°, ${b.el > 0 ? '+' : ''}${b.el.toFixed(1)}°${b.visible ? '' : ' (hidden)'}`;
+    const w = t.length * 6.4 + 16, tx = Math.min(Math.max(x - w / 2, L + 2), W - R - w - 2);
+    return `<rect x="${tx}" y="${y + 12}" width="${w}" height="18" rx="5" fill="var(--surface)" stroke="var(--line)"/><text x="${tx + w / 2}" y="${y + 24.5}" fill="${color}" font-size="10" ${font} text-anchor="middle">${t}</text>`;
   };
   const disk = (b, rDeg, color) => { const r = Math.max(5, rDeg * pxDeg); return `<circle cx="${X(b.az)}" cy="${Y(b.el)}" r="${r + 7}" fill="${color}" fill-opacity=".15"/><circle cx="${X(b.az)}" cy="${Y(b.el)}" r="${r}" fill="${color}"/>`; };
-  g += disk(st.earth, earthR, '#57B8E8') + disk(st.sun, 0.267, '#F2B544');
+  g += disk(st.earth, earthR, 'var(--earth-fill)') + disk(st.sun, 0.267, 'var(--sun-fill)');
   let t = `M${L},${H - B}`;
   for (let i = 0; i <= sky.length; i++) t += `L${X(i * 0.5).toFixed(1)},${Y(Math.max(lo, sky[i % sky.length])).toFixed(1)}`;
   t += `L${W - R},${H - B}Z`;
-  g += `<defs><linearGradient id="terr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22324C"/><stop offset="1" stop-color="#0D1524"/></linearGradient></defs>
-    <path d="${t}" fill="url(#terr)" stroke="#57B8E8" stroke-opacity=".45" stroke-width="1"/>`;
-  for (const [b, rDeg, c] of [[st.sun, 0.267, '#F2B544'], [st.earth, earthR, '#57B8E8']]) {
+  g += `<defs><linearGradient id="terr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--terrain-top)"/><stop offset="1" stop-color="var(--terrain-bot)"/></linearGradient></defs>
+    <path d="${t}" fill="url(#terr)" stroke="var(--terrain-line)" stroke-opacity=".55" stroke-width="1"/>`;
+  for (const [b, rDeg, c] of [[st.sun, 0.267, 'var(--sun-fill)'], [st.earth, earthR, 'var(--earth-fill)']]) {
     if (!b.visible && b.el >= lo) g += `<circle cx="${X(b.az)}" cy="${Y(b.el)}" r="${Math.max(5, rDeg * pxDeg)}" fill="none" stroke="${c}" stroke-dasharray="3 3" stroke-width="1.4"/>`;
     g += `<line x1="${X(b.az)}" x2="${X(b.az)}" y1="${Y(b.hz)}" y2="${H - B}" stroke="${c}" stroke-opacity=".5" stroke-dasharray="2 3"/>`;
   }
-  g += tag(st.earth, '#57B8E8', 'Earth') + tag(st.sun, '#F2B544', 'Sun');
-  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${g}</svg>`;
+  g += tag(st.earth, 'var(--earth-fill)', 'Earth') + tag(st.sun, 'var(--sun-fill)', 'Sun');
+  const keep = el.scrollLeft;
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="width:${W}px;max-width:none">${g}</svg>`;
+  if (narrow) el.scrollLeft = panoCentered ? keep : (panoCentered = true, X(st.sun.az) - el.clientWidth / 2);
   $('#panoLegend').innerHTML = `<span><i style="background:var(--sun);border-radius:50%"></i>Sun (${st.sun.az.toFixed(0)}°, ${fmtDeg(st.sun.el, 1)})</span><span><i style="background:var(--earth);border-radius:50%"></i>Earth (${st.earth.az.toFixed(0)}°, ${fmtDeg(st.earth.el, 1)})</span>`;
   $('#panoNote').textContent = `Skyline from ${site.custom ? 'NASA LOLA terrain at 240 m per pixel, computed in your browser' : 'NASA LOLA terrain at 80 m per pixel'}: 720 directions, terrain up to 300 km away, observer 2 m above ground. Dotted lines: Sun and Earth paths over the next 30 days. Vertical scale stretched ${(pxDeg / ((W - L - R) / 360)).toFixed(0)}×.`;
 }
@@ -126,7 +129,7 @@ const WIN_DAYS = 30;
 const winStart = t => Math.max(state.range.startMs, Math.min(state.range.endMs - WIN_DAYS * DAY, Math.floor(t / DAY) * DAY - 14 * DAY));
 function drawTimeline(win) {
   const el = $('#tl'), m = summarize(win);
-  el.innerHTML = timelineSVG([{ bandLabels: [`SUNLIGHT ${fmtPct(m.sunPct, 0)}`, `EARTH ${fmtPct(m.earthPct, 0)}`], series: win }],
+  el.innerHTML = timelineSVG([{ bandLabels: [`Sun ${fmtPct(m.sunPct, 0)}`, `Earth ${fmtPct(m.earthPct, 0)}`], series: win }],
     { t0: win.t0, hours: win.n, now: state.t, width: el.clientWidth, labelW: el.clientWidth < 500 ? 84 : 110, showPower: state.expert });
   const svg = el.firstElementChild;
   svg.onclick = ev => { const t = timelinePick(svg, ev, win.t0, win.n); if (t != null) { stop(); setTime(t); } };
@@ -163,7 +166,7 @@ async function drawYear() {
   const names = v => { const l = ys.months.map((m, i) => Math.round(m.sunPct) === Math.round(v) ? MONTHS[i] : null).filter(Boolean); return l.length > 2 ? `${l.length} months` : l.join(' & '); };
   $('#mLowPeak').innerHTML = `<span class="muted">Lowest: ${Math.round(mn)}% (${names(mn)}) · </span><span class="sun">Peak: ${Math.round(mx)}% (${names(mx)})</span>`;
   $('#months').innerHTML = ys.months.map((m, i) => `<div class="${i === cm ? 'on' : ''}" title="${MONTHS[i]} ${y}: sunlight ${fmtPct(m.sunPct)}, Earth ${fmtPct(m.earthPct)}">
-    <div style="display:flex;justify-content:space-between"><span>${MONTHS[i].toUpperCase()}</span>${i === cm ? '<span class="earth">●</span>' : ''}</div>
+    <div style="display:flex;justify-content:space-between"><span>${MONTHS[i]}</span>${i === cm ? '<span class="earth">●</span>' : ''}</div>
     <div class="cols"><i style="height:${(m.sunPct || 0) * .46}px;background:var(--sun);opacity:${.45 + .55 * (m.sunPct || 0) / 100}"></i><i style="height:${(m.earthPct || 0) * .46}px;background:var(--earth)"></i></div>
     <div class="vals"><span class="sun">${Number.isFinite(m.sunPct) ? Math.round(m.sunPct) : '–'}%</span><span class="earth">${Number.isFinite(m.earthPct) ? Math.round(m.earthPct) : '–'}%</span></div></div>`).join('');
   const s = yearSummary(site, y) ?? ys;
@@ -181,7 +184,7 @@ async function drawYear() {
 function ecoIntro() {
   const b = $('#ecoBody');
   if (!site.terrain || site.lat > -60) { b.innerHTML = `<p class="muted" style="margin:0">Available for points south of 60° S, where we have terrain data.</p>`; return; }
-  b.innerHTML = `<p style="margin:0 0 14px;color:#C4CAD6">Earth hidden too often? We test every point within <b>5 km</b> to find the closest one that sees Earth clearly more over the <b>next 30 days</b>.</p>
+  b.innerHTML = `<p style="margin:0 0 14px;color:var(--ink-2)">Earth hidden too often? We test every point within <b>5 km</b> to find the closest one that sees Earth clearly more over the <b>next 30 days</b>.</p>
     <button class="btn" id="ecoGo"><span class="ms" style="font-size:16px">search</span> Find it</button>
     <div class="progress hidden" id="ecoProg" style="margin-top:14px"><i></i></div>`;
   $('#ecoGo').onclick = runEco;
@@ -194,7 +197,7 @@ async function runEco() {
   if (!r) { b.innerHTML = '<p class="muted">No terrain data here.</p>'; return; }
   const here = r.here.earthPct;
   if (!r.best) {
-    b.innerHTML = `<p style="margin:0;color:#C4CAD6">No better spot within 5 km — the hills block Earth in every nearby direction.</p>
+    b.innerHTML = `<p style="margin:0;color:var(--ink-2)">No better spot within 5 km — the hills block Earth in every nearby direction.</p>
       <p class="note">From ${fmtDay(t0)}, Earth is in view ${fmtPct(here, 0)} of the next 30 days here; nothing within 5 km reaches ${fmtPct(Math.min(100, Math.max(here + 20, 50)), 0)}.${here >= 80 ? ' This site already has good contact.' : ' Plan a relay satellite, or look at other sites.'}</p>
       <div style="display:flex;justify-content:flex-end;border-top:1px solid var(--line2);padding-top:12px;margin-top:6px"><button class="btn sm" id="ecoAgain"><span class="ms" style="font-size:15px">search</span> Search again</button></div>`;
     $('#ecoAgain').onclick = ecoIntro; return;
@@ -205,7 +208,7 @@ async function runEco() {
       <div class="ministat"><div class="label">Distance</div><div class="v earth">${x.dist >= 1000 ? (x.dist / 1000).toFixed(1) + ' km' : Math.round(x.dist) + ' m'}</div><div class="note">${dirWord(compass(x.bearing))} · ${x.climb >= 0 ? 'climb' : 'descend'} ${fmtNum(Math.abs(x.climb))} m</div></div>
       <div class="ministat"><div class="label">Max slope</div><div class="v ${easy ? 'ok' : 'sun'}">${x.maxSlope.toFixed(0)}°</div><div class="note">${easy ? 'Accessible by rover' : 'Steep: needs a detour'}</div></div>
     </div>
-    <div class="kv" style="margin-top:10px"><span>Earth in view, next 30 days</span><span><span class="muted">${fmtPct(here, 0)} here →</span> <span class="earth">${fmtPct(x.earthPct, 0)} there</span></span></div>
+    <div class="kv" style="margin-top:10px"><span>Earth in view, next 30 days</span><span><span class="muted">${fmtPct(here, 0)} here,</span> <span class="earth">${fmtPct(x.earthPct, 0)} there</span></span></div>
     <p class="note">${fmtLat(x.lat)}, ${fmtLon(x.lon)}. Both points use 240 m terrain so they are compared fairly.</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
       <a class="btn ghost sm" href="${href('site', { lat: x.lat.toFixed(4), lon: x.lon.toFixed(4) })}">Open this spot</a>

@@ -9,6 +9,7 @@ const range = await ephemRange();
 const now = Math.min(Math.max(Date.now(), range.startMs), range.endMs);
 const Y = new Date(now).getUTCFullYear();
 const byId = id => sites.find(s => s.id === id);
+const PIC = { shackleton_rim_sr1: 'shackleton', a3_malapert_massif: 'malapert', de_gerlache_rim_gr1: 'de-gerlache', a3_nobile_rim_2: 'nobile' };
 const TOP = [
   ['shackleton_rim_sr1', 'Shackleton rim', 'A ridge 6.7 km from the pole, sunlit most of the year.'],
   ['a3_malapert_massif', 'Malapert Massif', 'Artemis III candidate that keeps Earth in view almost all the time.'],
@@ -66,7 +67,7 @@ $('#disc').innerHTML = `<svg viewBox="${-V} ${-V} ${2 * V} ${2 * V}">
 // ------------------------------------------------------------------ top sites
 $('#topsites').innerHTML = TOP.map(([id, name, line]) => {
   const s = byId(id), m = yearSummary(s, Y);
-  return `<a class="tsite reveal" href="site.html?id=${id}"><div class="thumb" style="background-image:url(${thumbUrl(s)})"></div>
+  return `<a class="tsite reveal" href="site.html?id=${id}"><div class="thumb" style="background-image:url(assets/photos/${PIC[id]}.webp)"></div>
     <h3>${name}</h3><p>${line}</p>
     <div class="row"><div><div class="label">Sunlight ${Y}</div><div class="v">${fmtPct(m.sunPct)}</div></div><span class="more">MORE INFO →</span></div></a>`;
 }).join('');
@@ -77,7 +78,6 @@ let k = 0;
 function facts() {
   const [id, name] = TOP[k], s = byId(id), m = yearSummary(s, Y);
   $('#kName').textContent = name;
-  $('#kImg').style.backgroundImage = `url(${thumbUrl(s)})`;
   const f = (label, v, cls = '') => `<div><div class="label">${label}</div><div class="v ${cls}">${v}</div></div>`;
   $('#kGrid').innerHTML =
     f(`Sunlight (${Y})`, fmtPct(m.sunPct), 'sun') +

@@ -3,10 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{var t=JSON.parse(localStorage.getItem('luminaluna.theme')||'null');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){document.documentElement.dataset.theme='dark'}</script>
+<meta name="color-scheme" content="light dark">
 <title>Learn · LUMINALUNA</title>
 <link rel="icon" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -16,40 +18,36 @@
   <div class="page stack">
     <section style="position:relative;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;padding:8px 0 18px;border-bottom:1px solid var(--line)">
       <div class="header-moon"></div>
-      <div style="position:relative"><h1 class="page-title" style="text-transform:uppercase;letter-spacing:.02em">Learn</h1>
-        <div class="subtitle">4 ideas to understand why landing sites are so different.</div></div>
-      <a class="btn" id="tryit" href="explore.html" style="position:relative">Try it yourself in Explore <span class="ms" style="font-size:16px">arrow_forward</span></a>
+      <div style="position:relative"><h1 class="page-title">Why the south pole is tricky</h1>
+        <div class="subtitle">Four ideas explain why two landing spots a few kilometres apart can be so different.</div></div>
+      <a class="btn" id="tryit" href="explore.html" style="position:relative">Try it yourself in Explore</a>
     </section>
 
     <div class="grid concepts">
       <section class="card concept">
         <div class="sq sun"><span class="ms" style="font-size:18px">wb_sunny</span></div>
-        <div class="label earth" style="margin-top:12px">01</div>
-        <h3 style="margin-top:4px">The Sun always stays low (1.5° tilt)</h3>
+        <h3 style="margin-top:14px">The Sun always stays low (1.5° tilt)</h3>
         <p>The Sun never climbs high above flat ground, so hills cast shadows kilometres long. A 100 m hill casts a shadow almost 4 km long.</p>
         <p class="x-only mono" style="font-size:11.5px">L = h / tan(e) ≈ 38·h at e = 1.5°</p>
         <div class="fact"><div><span class="label">Solar elevation</span><span class="sun" style="font-weight:600">1.5° max</span></div></div>
       </section>
       <section class="card concept">
         <div class="sq earth"><span class="ms" style="font-size:18px">public</span></div>
-        <div class="label earth" style="margin-top:12px">02</div>
-        <h3 style="margin-top:4px">Earth rises and sets slowly (libration)</h3>
+        <h3 style="margin-top:14px">Earth rises and sets slowly (libration)</h3>
         <p>The Moon wobbles slightly, so Earth slowly rises and sets near the horizon, and mountains can hide it for up to two weeks.</p>
         <p class="x-only mono" style="font-size:11.5px">Libration in latitude ±6.7° over 27.2 days</p>
         <div class="fact"><div><span class="label">Earth moves</span><span class="earth" style="font-weight:600">±6.7°</span></div></div>
       </section>
       <section class="card concept">
         <div class="sq"><span class="ms" style="font-size:18px">landscape</span></div>
-        <div class="label earth" style="margin-top:12px">03</div>
-        <h3 style="margin-top:4px">The Moon's curve hides far mountains</h3>
+        <h3 style="margin-top:14px">The Moon's curve hides far mountains</h3>
         <p>The Moon is small, so the ground curves away fast. Distant mountains sit lower than they look: 50 km away, about 720 m lower.</p>
         <p class="x-only mono" style="font-size:11.5px">drop ≈ d² / 2R, R = 1,737 km</p>
         <div class="fact"><div><span class="label">Skyline range</span><span style="font-weight:600">300 km</span></div></div>
       </section>
       <section class="card concept">
         <div class="sq"><span class="ms" style="font-size:18px">dark_mode</span></div>
-        <div class="label earth" style="margin-top:12px">04</div>
-        <h3 style="margin-top:4px">No air: no twilight, black shadows</h3>
+        <h3 style="margin-top:14px">No air: no twilight, black shadows</h3>
         <p>Without air there is no dusk glow and shadows are pitch black. The Sun moves so slowly it can take hours to slide behind a hill.</p>
         <p class="x-only mono" style="font-size:11.5px">Lit when ≥ 50 % of the disk clears the ridge</p>
         <div class="fact"><div><span class="label">Counted as lit</span><span style="font-weight:600">½ disk</span></div></div>
@@ -58,10 +56,9 @@
 
     <section style="border-top:1px solid var(--line);padding-top:22px">
       <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-end;margin-bottom:16px">
-        <div><span class="tag earth">Example</span>
-          <h2 class="serif" style="font-size:26px;margin:10px 0 4px">A few kilometres change everything</h2>
+        <div><h2 style="font-size:24px;font-weight:650;font-stretch:112%;margin:0 0 4px">A few kilometres change everything</h2>
           <div class="subtitle" id="exIntro">Drag through 2026 to compare Shackleton's rim with the exact south pole, 6.7 km away.</div></div>
-        <div class="card" style="padding:12px 16px;min-width:260px"><div class="label">Moment shown</div><div class="earth" id="exDate" style="font-weight:600;margin-top:4px"></div></div>
+        <div class="card" style="padding:12px 16px;min-width:260px"><div class="label">Moment shown (UTC)</div><div class="earth" id="exDate" style="font-weight:600;margin-top:4px"></div></div>
       </div>
       <input type="range" id="exSlider" min="0" max="8759" step="1" aria-label="Moment in 2026">
       <div id="exStrip" style="margin-top:8px"></div>
