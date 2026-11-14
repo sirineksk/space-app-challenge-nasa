@@ -15,7 +15,7 @@
 <header class="lnav">
   <a class="brand" href="index.html" id="logo"></a>
   <nav id="lmenu"><a href="explore.html">Explore</a><a href="compare.html">Compare</a><a href="learn.html">Learn</a><a href="#about">About</a></nav>
-  <a class="btn sm hide-m" href="explore.html">Launch the tool <span class="ms" style="font-size:15px">arrow_forward</span></a>
+  <a class="btn launch hide-m" href="explore.html">Launch the tool <span class="ms" style="font-size:18px">arrow_forward</span></a>
   <button class="iconbtn burger" id="burger" aria-label="Menu"><span class="ms" style="font-size:18px">menu</span></button>
 </header>
 
@@ -46,10 +46,11 @@
         <span><b>Watch the Sun circle the horizon</b><br><span class="muted">360° simulation at Shackleton rim</span></span>
       </a>
     </div>
+    <a class="scrollcue" href="#sites" aria-label="Scroll to the top landing sites"><span>Scroll</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></a>
   </section>
 
   <!-- top sites -->
-  <section class="wrap reveal">
+  <section class="wrap wide reveal" id="sites">
     <h2 class="sec">Top landing sites</h2>
     <div class="topsites" id="topsites"></div>
   </section>
@@ -88,11 +89,12 @@
   <section class="wrap" id="about">
     <h2 class="sec" style="text-align:center">About us</h2>
     <p class="about-lead">We are a team of four who built LuminaLuna for the NASA Space Apps Challenge 2026, so anyone can see in seconds which spots near the lunar south pole get sunlight and a view of Earth.</p>
-    <div class="team">
-      <div class="card reveal"><b>Sirine</b><span class="earth">Data &amp; pipeline</span></div>
-      <div class="card reveal"><b>Hana</b><span class="earth">Backend</span></div>
-      <div class="card reveal"><b>Meriem</b><span class="earth">Design &amp; frontend</span></div>
-      <div class="card reveal"><b>Maya</b><span class="earth">Research &amp; marketing</span></div>
+    <div class="team reveal">
+      <div class="card member"><span class="avatar">S</span><b>Sirine</b><span class="earth">Data &amp; pipeline</span><p>Turns NASA terrain maps and JPL planet positions into the horizons and sunlight hours behind every number.</p></div>
+      <div class="card member"><span class="avatar">H</span><b>Hana</b><span class="earth">Backend</span><p>Builds the API that serves the sites, the timelines and the search for the nearest spot with a view of Earth.</p></div>
+      <div class="card member"><span class="avatar">M</span><b>Meriem</b><span class="earth">Design &amp; frontend</span><p>Designs the interface and builds the pages, from the polar map to the 360° skyline.</p></div>
+      <div class="card member"><span class="avatar">M</span><b>Maya</b><span class="earth">Research &amp; marketing</span><p>Studies the candidate landing sites and tells the story of the project to judges and the public.</p></div>
+    </div>
     </div>
   </section>
 </main>

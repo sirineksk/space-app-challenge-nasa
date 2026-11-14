@@ -110,3 +110,115 @@
 body.landing { background: #020306; }
 body.landing::before { opacity: 1; animation: none;
   background: linear-gradient(180deg, rgba(3,5,10,.25), rgba(3,5,10,.55)), url(../assets/bg-landing.webp) center / cover no-repeat; }
+
+/* ================================================================ v3: slimmer bar, full-screen hero, bigger sections */
+.lnav { height: 70px; }
+.lnav .emblem { width: 58px; height: 58px; }
+.lnav nav { gap: 46px; }
+.lnav nav a { font-size: 16px; letter-spacing: .14em; padding: 10px 2px; }
+.lnav > .btn.launch { padding: 12px 22px; font-size: 15.5px; border-radius: 10px; gap: 10px; }
+
+/* hero fills the first screen; the rest appears on scroll */
+.landing .hero.wrap { max-width: 1380px; min-height: calc(100vh - 70px); min-height: calc(100svh - 70px); margin-top: 0; padding-top: 24px; padding-bottom: 84px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 56px; position: relative; box-sizing: border-box; }
+.hero h1 { font-size: clamp(54px, 4.9vw, 78px); line-height: 1.03; }
+.hero .lead { font-size: 18.5px; max-width: 560px; margin: 22px 0 30px; }
+.checkbox { max-width: 560px; padding: 28px; }
+.checkbox h3 { font-size: 21px; }
+.checkbox .field { font-size: 15px; padding: 12px 13px; }
+.checkbox .label { font-size: 11.5px; }
+.checkbox .seg button { font-size: 12.5px; padding: 7px 14px; }
+.checkbox .btn.wide { padding: 15px; font-size: 15.5px; }
+.disc { max-width: min(720px, calc(100vh - 150px)); max-width: min(720px, calc(100svh - 150px)); }
+.play { font-size: 14px; padding: 12px 16px; }
+.scrollcue { position: absolute; left: 50%; bottom: 18px; translate: -50% 0; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  font: 600 11.5px var(--sans); letter-spacing: .2em; text-transform: uppercase; color: #8C98AB; }
+.scrollcue svg { animation: cue 1.8s ease-in-out infinite; }
+.scrollcue:hover { color: var(--earth); }
+@keyframes cue { 0%, 100% { transform: translateY(0); opacity: .6; } 50% { transform: translateY(6px); opacity: 1; } }
+
+/* top landing sites: a little larger */
+.landing .wrap.wide { max-width: 1340px; }
+.topsites { gap: 22px; }
+.tsite { padding: 12px; border-radius: 14px; }
+.tsite h3 { font-size: 21px; margin: 16px 6px 6px; }
+.tsite p { font-size: 14.5px; line-height: 1.5; margin: 0 6px 16px; }
+.tsite .row { margin: 0 6px 6px; }
+.tsite .row .v { font-size: 27px; }
+.tsite .more { font-size: 11.5px; }
+.tsite:hover { transform: translateY(-4px); border-color: var(--earth); box-shadow: 0 16px 40px rgba(0,0,0,.45); }
+.sec { font-size: 32px; }
+
+/* our mission: larger text */
+.mission p { font-size: 17.5px; line-height: 1.75; }
+.mission .sec { font-size: 36px; }
+
+/* about us: short bios + hover */
+.team { gap: 18px; }
+.team .member { position: relative; overflow: hidden; padding: 24px 22px 22px; gap: 6px; cursor: default;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1.2), border-color .3s ease, box-shadow .35s ease, background .35s ease; }
+.team .member::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, var(--sun), var(--earth));
+  transform: scaleX(0); transform-origin: left; transition: transform .45s cubic-bezier(.3,1,.4,1); }
+.team .member .avatar { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 8px;
+  font: 700 19px var(--serif); color: #0A0F1A; background: linear-gradient(135deg, var(--sun), var(--earth));
+  transition: transform .5s cubic-bezier(.2,.8,.2,1.3), box-shadow .4s ease; }
+.team .member b { font-size: 19px; }
+.team .member span.earth { font-size: 13px; font-weight: 600; }
+.team .member p { margin: 8px 0 0; color: #AEB7C6; font-size: 14px; line-height: 1.55; }
+.team .member:hover { transform: translateY(-8px); border-color: var(--earth); box-shadow: 0 22px 50px rgba(0,0,0,.5), 0 0 0 1px rgba(87,184,232,.25); }
+.team .member:hover::before { transform: scaleX(1); }
+.team .member:hover .avatar { transform: rotate(-10deg) scale(1.12); box-shadow: 0 0 24px rgba(87,184,232,.45); }
+.about-lead { font-size: 16.5px; }
+@media (prefers-reduced-motion: reduce) { .scrollcue svg { animation: none; } .team .member, .team .member .avatar, .tsite { transition: none; } }
+
+@media (max-width: 980px) {
+  .landing .hero.wrap { min-height: 0; grid-template-columns: 1fr; padding-bottom: 40px; }
+  .scrollcue { display: none; }
+  .disc { max-width: 560px; }
+  .team { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 700px) {
+  .lnav { height: 64px; }
+  .lnav .emblem { width: 50px; height: 50px; }
+  .lnav nav { top: 64px; }
+  .hero h1 { font-size: 38px; }
+  .hero .lead { font-size: 16px; }
+  .checkbox { padding: 20px; }
+  .team { grid-template-columns: 1fr; }
+  .tsite h3 { font-size: 19px; }
+}
+.lnav { padding: 0 max(28px, calc((100vw - 1380px) / 2 + 28px)); }
+@media (max-width: 700px) { .lnav { padding: 0 16px; } }
+
+/* ================================================================ v4 */
+/* page background: show the space photo more clearly */
+body.landing::before { background: linear-gradient(180deg, rgba(3,5,10,.08), rgba(3,5,10,.32)), url(../assets/bg-landing.webp) center / cover no-repeat; }
+
+/* our mission: larger */
+.mission .sec { font-size: 44px; margin-bottom: 26px; }
+.mission p { font-size: 20px; line-height: 1.75; }
+
+/* about us: larger, photo cards */
+#about .sec { font-size: 40px; }
+.about-lead { font-size: 19px; max-width: 760px; margin-bottom: 34px; }
+.team { gap: 22px; }
+.team .member { min-height: 290px; padding: 34px 28px 30px; gap: 8px; justify-content: flex-end; border-color: rgba(255,255,255,.12);
+  background: linear-gradient(180deg, rgba(4,7,14,.15) 0%, rgba(4,7,14,.55) 45%, rgba(4,7,14,.88) 100%), url(../assets/bg-team.webp) center / cover no-repeat; }
+.team .member:nth-child(1) { background-position: center, 10% 30%; }
+.team .member:nth-child(2) { background-position: center, 40% 70%; }
+.team .member:nth-child(3) { background-position: center, 70% 20%; }
+.team .member:nth-child(4) { background-position: center, 95% 60%; }
+.team .member { background-size: auto, 260%; }
+.team .member b { font-size: 26px; }
+.team .member span.earth { font-size: 15px; }
+.team .member p { font-size: 16.5px; line-height: 1.6; color: #D3D9E3; }
+.team .member:hover { background-size: auto, 285%; }
+.team .member { transition: transform .35s cubic-bezier(.2,.8,.2,1.2), border-color .3s ease, box-shadow .35s ease, background-size .8s ease; }
+@media (max-width: 700px) {
+  .mission .sec, #about .sec { font-size: 32px; }
+  .mission p { font-size: 17px; }
+  .team .member { min-height: 220px; }
+}
+.team .member { justify-content: flex-start; padding-top: 96px; background-size: auto, 170%;
+  background-image: linear-gradient(180deg, rgba(4,7,14,0) 0%, rgba(4,7,14,.45) 40%, rgba(4,7,14,.85) 100%), url(../assets/bg-team.webp); }
+.team .member:hover { background-size: auto, 190%; }
