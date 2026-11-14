@@ -2,7 +2,7 @@
 import {
   initShell, onTime, state, $, $$, esc, href, siteParams, siteKey, siteFromKey, store, toast, loadSites,
   fmtCoords, fmtNum, fmtPct, fmtLong, fmtDate, fmtDay, isoMin, parseIsoUTC, DAY, getCompare, setCompare,
-  yearSummary, shortName, timelineSVG, thumbUrl, fmtLat, fmtLon,
+  yearSummary, shortName, timelineSVG, thumbUrl, fmtLat, fmtLon, countUp,
 } from './ui.js';
 import { series, summarize } from './engine.js';
 import { HOUR } from './data.js';
@@ -165,7 +165,9 @@ async function render() {
   const cols = await buildCols();
   lastCols = cols;
   setUrl(); renderTools(); renderCols(cols); renderTimeline(cols); renderSummary(cols);
+  if (!counted) { counted = true; countUp($$('#metrics .cell .v'), 900); }
 }
+let counted = false;
 $('#csv').onclick = () => exportCsv(lastCols);
 $$('#tabs button').forEach(b => b.onclick = () => { mode = b.dataset.m; render(); });
 onTime(() => render());

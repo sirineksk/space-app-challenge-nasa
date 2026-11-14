@@ -3,6 +3,7 @@
 .lnav { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 24px; padding: 0 28px; height: 68px;
   background: rgba(5,8,15,.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
 .lnav .brand { padding: 0; height: auto; display: flex !important; }
+.lnav .emblem { width: 52px; height: 52px; }
 .lnav nav { margin-left: auto; display: flex; gap: 26px; }
 .lnav nav a { font: 600 12px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: #C4CAD6; }
 .lnav nav a:hover { color: var(--earth); }
@@ -11,7 +12,7 @@
 .lmain > section + section { margin-top: 76px; }
 .hero { display: grid; grid-template-columns: 1fr 1.05fr; gap: 40px; align-items: center; margin-top: 48px; }
 .hero h1 { font: 700 54px/1.05 var(--serif); letter-spacing: .005em; margin: 0; }
-.hero .grad { background: linear-gradient(90deg, var(--sun), #F6D38B 40%, var(--earth)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero .grad { background: linear-gradient(90deg, var(--sun), #F6D38B 25%, var(--earth) 50%, #F6D38B 75%, var(--sun)); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 8s linear infinite; }
 .hero .lead { color: #C4CAD6; font-size: 15px; max-width: 460px; margin: 18px 0 26px; }
 .checkbox { max-width: 470px; }
 .hero-map { position: relative; }
@@ -69,3 +70,17 @@
   .play { position: static; margin-top: 14px; }
   .lmain > section + section { margin-top: 52px; }
 }
+
+/* landing animations */
+.hero-text > * { animation: rise .8s cubic-bezier(.2,.7,.2,1) both; }
+.hero-text > :nth-child(2) { animation-delay: .15s; } .hero-text > :nth-child(3) { animation-delay: .3s; }
+.hero-map { animation: fade 1.4s ease .2s both; }
+.disc { animation: discglow 6s ease-in-out infinite; }
+@keyframes discglow { 0%, 100% { box-shadow: 0 0 60px rgba(87,184,232,.10), inset 0 0 0 1px var(--line2); } 50% { box-shadow: 0 0 110px rgba(87,184,232,.22), inset 0 0 0 1px var(--line2); } }
+.disc svg .orbit { transform-origin: 0 0; animation: spinSlow 120s linear infinite; }
+.play .playbtn { animation: pulse 2.6s ease-out infinite; }
+.tsite:nth-child(2) { transition-delay: 0s; }
+.topsites .tsite.reveal:nth-child(2) { transition-delay: .08s; } .topsites .tsite.reveal:nth-child(3) { transition-delay: .16s; } .topsites .tsite.reveal:nth-child(4) { transition-delay: .24s; }
+.team .card.reveal:nth-child(2) { transition-delay: .08s; } .team .card.reveal:nth-child(3) { transition-delay: .16s; } .team .card.reveal:nth-child(4) { transition-delay: .24s; }
+.kgrid > div { transition: opacity .4s; }
+.kgrid.swap > div { opacity: 0; }

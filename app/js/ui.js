@@ -75,7 +75,7 @@ export async function initShell(page) {
 
   const lastSite = store.get('lastSite', null);
   $('#sidebar').innerHTML = `
-    <a class="brand" href="index.html">${LOGO}<div><b>LUMINALUNA</b><small>Eco-Path mission</small></div></a>
+    <a class="brand" href="index.html" title="LuminaLuna — home">${LOGO}</a>
     <nav class="nav">${PAGES.map(([p, label, icon]) => {
       const params = p === 'site' && page !== 'site' && lastSite ? lastSite : {};
       return `<a data-page="${p}" class="${p === page ? 'on' : ''}" href="${p === 'site' && page === 'site' ? '#' : href(p, params)}"><span class="ms">${icon}</span><span>${label}</span></a>`;
@@ -290,3 +290,38 @@ upgradeIcons(document);
 new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1) { if (n.classList?.contains('ms')) upgradeIcons(n.parentNode); else upgradeIcons(n); } })))
   .observe(document.documentElement, { childList: true, subtree: true });
 export const dirWord = c => ({ N: 'north', NE: 'north-east', E: 'east', SE: 'south-east', S: 'south', SW: 'south-west', W: 'west', NW: 'north-west' }[c]);
+
+
+// ------------------------------------------------------------------ animations
+const reduced = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
+/** Count the first number in each element up from 0 (keeps its format: decimals, thousands separators). */
+export function countUp(els, ms = 900) {
+  if (reduced()) return;
+  for (const el of els) {
+    const node = [...el.childNodes].find(n => n.nodeType === 3 && /\d/.test(n.textContent)) ?? (el.firstChild?.nodeType === 3 ? el.firstChild : null);
+    const target = node ?? el;
+    const txt = target.textContent, m = txt.match(/-?[\d,]*\.?\d+/);
+    if (!m) continue;
+    const raw = m[0], end = parseFloat(raw.replace(/,/g, ''));
+    if (!Number.isFinite(end) || end === 0) continue;
+    const dec = (raw.split('.')[1] ?? '').length, comma = raw.includes(',') || Math.abs(end) >= 10000;
+    const fmt = v => comma ? v.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec }) : v.toFixed(dec);
+    const t0 = performance.now();
+    const step = now => {
+      const k = Math.min(1, (now - t0) / ms), e = 1 - (1 - k) ** 3;
+      target.textContent = txt.replace(raw, fmt(end * e));
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+}
+/** Fade-in for elements with .reveal when they scroll into view. */
+export function revealOnScroll(root = document) {
+  const els = [...root.querySelectorAll('.reveal:not(.in)')];
+  if (reduced() || !('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('in')); return; }
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
+  els.forEach(e => io.observe(e));
+}
+// cards rise in when a page opens (only on first load, so re-renders don't flicker)
+document.body.classList.add('enter');
+setTimeout(() => document.body.classList.remove('enter'), 1800);

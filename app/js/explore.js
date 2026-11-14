@@ -1,7 +1,7 @@
 // explore.js — site list, polar map, and the selected-site panel.
 import {
   initShell, onTime, state, $, $$, esc, href, siteParams, store, toast, loadSites, siteFromKey, siteKey, addCompare, refreshNav,
-  fmtLat, fmtLon, fmtCoords, fmtNum, fmtPct, fmtLong, fmtDur, fmtDeg, yearSummary, verdict, shortName,
+  fmtLat, fmtLon, fmtCoords, fmtNum, fmtPct, fmtLong, fmtDur, fmtDeg, yearSummary, verdict, shortName, countUp,
 } from './ui.js';
 import { prepareSite, yearStats, statusAt, slopeAt } from './engine.js';
 import { toPolarXY, fromPolarXY } from './geo.js';
@@ -91,7 +91,7 @@ function drawMarks() {
     const [x, yy] = toSvg(s.lat, s.lon), on = selected?.id === s.id;
     m += `<g class="mk" data-id="${s.id}" transform="translate(${x} ${yy})" style="cursor:pointer">
       <circle r="${r * 2.4}" fill="transparent"/>
-      ${on ? `<circle r="${r * 2.1}" fill="rgba(87,184,232,.15)" stroke="#57B8E8" stroke-width="${1.5 * px}"/>` : ''}
+      ${on ? `<circle r="${r * 2.1}" fill="rgba(87,184,232,.15)" stroke="#57B8E8" stroke-width="${1.5 * px}"><animate attributeName="r" values="${r * 1.4};${r * 3};${r * 1.4}" dur="2.4s" repeatCount="indefinite"/><animate attributeName="stroke-opacity" values="1;.1;1" dur="2.4s" repeatCount="indefinite"/></circle>` : ''}
       <circle r="${r}" fill="${on ? '#57B8E8' : '#E6EAF2'}" stroke="#05080F" stroke-width="${1.5 * px}"/>
       ${on || zoomed ? txt(r * 1.8, r * .5, esc(shortName(s))) : ''}</g>`;
   }
@@ -166,6 +166,8 @@ async function select(s, fromList = false) {
   refreshNav(); renderList();
   if (fromList) centerOn(s, s.lat < -88.5 ? 120 : null); else drawMarks();
   await renderPanel();
+  const p = $('#panel'); p.classList.remove('fadein'); void p.offsetWidth; p.classList.add('fadein');
+  countUp($$('#panel .ministat .v'), 700);
 }
 async function pickCustom(lat, lon) {
   const tok = ++token;

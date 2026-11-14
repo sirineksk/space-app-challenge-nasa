@@ -2,7 +2,7 @@
 import {
   initShell, onTime, setTime, state, $, $$, esc, href, siteParams, siteKey, siteFromKey, store, toast, addCompare, loadSites,
   fmtLat, fmtLon, fmtCoords, fmtNum, fmtPct, fmtLong, fmtDur, fmtDeg, fmtDate, fmtDayHM, fmtDay, MONTHS, DAY,
-  yearSummary, shortName, timelineSVG, timelinePick, refreshNav, dirWord, thumbUrl,
+  yearSummary, shortName, timelineSVG, timelinePick, refreshNav, dirWord, thumbUrl, countUp,
 } from './ui.js';
 import { statusAt, series, summarize, earthWindows, yearStats, nearestEarthSpot, VISIBLE } from './engine.js';
 import { angularRadius, compass, R_EARTH_KM } from './geo.js';
@@ -51,7 +51,7 @@ function statusCard(isSun, b) {
     <div style="display:flex;justify-content:space-between;gap:12px">
       <div><div class="label" style="color:${b.visible ? col : 'var(--muted)'}"><span class="dot" style="background:${col};opacity:${b.visible ? 1 : .4}"></span>${label}</div>
         <div class="big">${big}</div></div>
-      <div class="icon" style="color:${col};opacity:${b.visible ? 1 : .55}"><span class="ms" style="font-size:22px">${isSun ? 'wb_sunny' : 'public'}</span></div>
+      <div class="icon ${b.visible ? `live ${isSun ? '' : 'earthlive'}` : ''}" style="color:${col};opacity:${b.visible ? 1 : .55}"><span class="ms" style="font-size:22px">${isSun ? 'wb_sunny' : 'public'}</span></div>
     </div>
     <div class="foot"><span style="color:${col}">${pos}</span><span class="muted">${when}</span>
       <div class="note b-only" style="margin-top:6px">${why}</div></div>
@@ -152,7 +152,7 @@ function drawWindows(st) {
       <span class="pill">${pill}</span></div>`;
   }).join('') + avail;
 }
-let yearCache = null;
+let yearCache = null, statsCounted = false;
 async function drawYear() {
   const y = new Date(state.t).getUTCFullYear();
   if (yearCache?.y !== y) yearCache = { y, ys: await yearStats(site, y) };
@@ -174,6 +174,7 @@ async function drawYear() {
     card('Longest night', 'dark_mode', '', fmtLong(s.nightH), `Continuous darkness${s.nightH >= 48 ? ` (${s.nightH} h)` : ''}. A 100 W rover needs ${fmtNum(battery, 1)} kWh of battery`) +
     card('Earth visibility', 'settings_input_antenna', 'earth', fmtPct(s.earthPct), `Time Earth is in direct sight · longest gap ${fmtLong(s.noEarthH)}`) +
     card('Daily energy yield', 'bolt', 'sun', `${fmtNum(s.energyWhDay)} Wh`, 'Per day from a 1 m² panel <span class="x-only">(30 %, vertical, tracking the Sun)</span>');
+  if (!statsCounted) { statsCounted = true; countUp($$('#stats .v'), 1100); }
 }
 
 // ------------------------------------------------------------------ ECO-PATH
@@ -237,10 +238,10 @@ async function render() {
 
 let timer = null, step = 1;
 const playIcon = on => `<span class="ms" style="font-size:16px">${on ? 'pause' : 'play_arrow'}</span>`;
-function stop() { if (timer) { clearInterval(timer); timer = null; $('#play').innerHTML = playIcon(false); } }
+function stop() { if (timer) { clearInterval(timer); timer = null; $('#play').innerHTML = playIcon(false); $('#play').classList.remove('playing'); } }
 function play() {
   if (timer) return stop();
-  $('#play').innerHTML = playIcon(true);
+  $('#play').innerHTML = playIcon(true); $('#play').classList.add('playing');
   timer = setInterval(() => {
     if (state.t + step * HOUR > state.range.endMs) return stop();
     setTime(state.t + step * HOUR);
