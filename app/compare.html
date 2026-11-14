@@ -4,38 +4,46 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Compare · LUMINALUNA</title>
-<link rel="icon" href="assets/logo.svg">
+<link rel="icon" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
 <aside class="sidebar" id="sidebar"></aside>
 <main class="main">
-  <header class="top">
-    <div><h1>Compare</h1><div class="sub">Up to 4 sites side by side, or the same site on two landing dates.</div></div>
-    <div class="controls" id="controls"></div>
-  </header>
+  <div class="topbar" id="topbar"></div>
+  <div class="page stack">
+    <section class="card" style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between">
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center">
+        <h1 class="page-title">Compare</h1>
+        <div class="seg blue" id="tabs"><button data-m="sites" class="on">Compare sites</button><button data-m="dates">Same site, 2 dates</button></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center" id="tools"></div>
+    </section>
 
-  <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px">
-    <div class="seg" id="tabs"><button data-m="sites" class="on">Compare sites</button><button data-m="dates">Same site, 2 dates <span class="muted" style="font-size:11px">(launch delay)</span></button></div>
-    <div class="controls" id="tools"></div>
+    <div class="cols4" id="cards"><div class="loading">Computing…</div></div>
+
+    <section class="card">
+      <div class="card-head"><h2 style="display:flex;gap:10px;align-items:center"><span class="ms earth" style="font-size:20px">compare_arrows</span>Metrics comparison</h2><span class="label" id="windowNote"></span></div>
+      <div id="metrics"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h2 style="display:flex;gap:10px;align-items:center"><span class="ms earth" style="font-size:20px">schedule</span><span id="tlTitle">30-Day Timeline</span></h2>
+        <div class="legend"><span><i style="background:var(--sun)"></i>Sunlight</span><span><i style="background:var(--earth)"></i>Earth contact</span><span><i style="background:#1A2538"></i>Shadow / no contact</span></div></div>
+      <div id="tl"></div>
+    </section>
+
+    <section class="card" style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
+      <div style="display:flex;gap:14px;align-items:flex-start;flex:1;min-width:260px">
+        <span class="iconbtn earth" style="flex:none"><span class="ms" style="font-size:18px">info</span></span>
+        <div><div class="summary" id="summary"></div><div class="note" id="summaryNote" style="margin-top:6px"></div></div>
+      </div>
+      <button class="btn" id="csv"><span class="ms" style="font-size:16px">file_download</span> Export CSV</button>
+    </section>
+    <footer class="credits" id="credits"></footer>
   </div>
-
-  <div class="note" id="windowNote" style="margin-bottom:12px"></div>
-  <div class="cols4" id="cols"><div class="loading">Computing…</div></div>
-
-  <section class="card" style="margin-top:20px">
-    <div class="card-head"><div><h2 style="display:inline">30-day timeline</h2> <span class="mono muted" id="tlRange" style="font-size:12px"></span></div>
-      <div class="legend"><span><i style="background:var(--sun)"></i>Sunlight</span><span><i style="background:var(--earth)"></i>Earth in view</span></div></div>
-    <div id="tl"></div>
-  </section>
-
-  <section class="card" style="margin-top:20px;display:flex;gap:16px;align-items:flex-start">
-    <span class="ms earth" style="font-size:26px;margin-top:4px">info</span>
-    <div><div class="summary" id="summary"></div><div class="note" id="summaryNote" style="margin-top:8px"></div></div>
-  </section>
-  <footer class="credits" id="credits"></footer>
 </main>
 <script type="module" src="js/compare.js"></script>
 </body>

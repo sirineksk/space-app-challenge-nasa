@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LUMINALUNA · ECO-PATH — Light and link at the lunar south pole</title>
+<meta name="description" content="Compare lunar south pole landing sites by sunlight for power and Earth in view for radio contact, computed from real NASA terrain. NASA Space Apps Challenge 2026.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/landing.css">
+</head>
+<body class="landing">
+<header class="lnav">
+  <a class="brand" href="index.html" id="logo"></a>
+  <nav id="lmenu"><a href="explore.html">Explore</a><a href="compare.html">Compare</a><a href="learn.html">Learn</a><a href="#about">About</a></nav>
+  <a class="btn sm hide-m" href="explore.html">Launch the tool <span class="ms" style="font-size:15px">arrow_forward</span></a>
+  <button class="iconbtn burger" id="burger" aria-label="Menu"><span class="ms" style="font-size:18px">menu</span></button>
+</header>
+
+<main class="lmain">
+  <!-- hero -->
+  <section class="hero wrap">
+    <div class="hero-text">
+      <h1>LIGHT AND LINK<br>AT <span class="grad">THE LUNAR</span><br>SOUTH POLE.</h1>
+      <p class="lead">Compare landing sites by sunlight for power and Earth in view for radio contact, computed from real NASA terrain.</p>
+      <form class="card checkbox" id="check">
+        <div class="card-head" style="margin-bottom:14px"><h3>Check a landing site</h3></div>
+        <div class="grid" style="grid-template-columns:1.3fr 1fr;gap:12px">
+          <label class="label">Site<select class="field" id="fSite" style="margin-top:6px;text-transform:none;letter-spacing:0;font-weight:500"></select></label>
+          <label class="label">Date (UTC)<input class="field" type="datetime-local" id="fDate" step="60" style="margin-top:6px;color-scheme:dark;letter-spacing:0;font-weight:500"></label>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0">
+          <span class="label">Mode</span>
+          <div class="seg" id="fMode"><button type="button" data-m="b" class="on">Beginner</button><button type="button" data-m="x">Expert</button></div>
+        </div>
+        <button class="btn wide" type="submit">SEE SUNLIGHT &amp; EARTH <span class="ms" style="font-size:16px">arrow_forward</span></button>
+      </form>
+    </div>
+    <div class="hero-map">
+      <div class="disc" id="disc"></div>
+      <a class="play" id="playLink" href="site.html?id=shackleton_rim_sr1&play=1">
+        <span class="playbtn"><span class="ms" style="font-size:16px">play_arrow</span></span>
+        <span><b>Watch the Sun circle the horizon</b><br><span class="muted">360° simulation at Shackleton rim</span></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- top sites -->
+  <section class="wrap">
+    <h2 class="sec">Top landing sites</h2>
+    <div class="topsites" id="topsites"></div>
+  </section>
+
+  <!-- key facts -->
+  <section class="wrap">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <h2 class="sec" style="margin:0">Key facts</h2>
+      <div class="card picker"><span class="label earth">Target site</span>
+        <button class="iconbtn" id="kPrev" aria-label="Previous site"><span class="ms" style="font-size:15px">chevron_left</span></button>
+        <b id="kName" class="serif"></b>
+        <button class="iconbtn" id="kNext" aria-label="Next site"><span class="ms" style="font-size:15px">chevron_right</span></button></div>
+    </div>
+    <div class="keyfacts">
+      <div class="kimg" id="kImg"><div class="cap"><span class="label sun">Terrain</span><br>NASA LOLA · 80 m per pixel</div></div>
+      <div class="kgrid" id="kGrid"></div>
+    </div>
+  </section>
+
+  <!-- mission -->
+  <section class="wrap mission">
+    <div>
+      <h2 class="sec">Our mission</h2>
+      <p>Near the lunar south pole, the Sun skims the horizon and Earth rises and sets slowly. A few kilometres decide between power and darkness, contact and silence. We compute sunlight and direct Earth visibility for candidate sites and for any point you click, using real NASA lunar terrain.</p>
+      <p class="muted">By combining NASA LOLA laser topography with JPL planetary ephemerides, LUMINALUNA helps mission planners find sites with the most sunlight and the most time in direct radio contact with Earth.</p>
+    </div>
+    <div class="card">
+      <div class="card-head" style="margin-bottom:8px"><span class="label">Horizon · 360° around Shackleton rim</span><span class="label sun" id="mSun"></span></div>
+      <div id="mSky"></div>
+      <div class="note" style="margin-top:6px">The real skyline from NASA terrain, with the Sun's path over the next 30 days.</div>
+    </div>
+  </section>
+
+  <!-- about -->
+  <section class="wrap" id="about">
+    <h2 class="sec" style="text-align:center">About us</h2>
+    <div class="team">
+      <div class="card"><b>Sirine</b><span class="earth">Data &amp; pipeline</span></div>
+      <div class="card"><b>Hana</b><span class="earth">Backend</span></div>
+      <div class="card"><b>Meriem</b><span class="earth">Design &amp; frontend</span></div>
+      <div class="card"><b>Maya</b><span class="earth">Research &amp; marketing</span></div>
+    </div>
+  </section>
+</main>
+
+<footer class="lfoot wrap">
+  <b class="serif">LUMINALUNA</b>
+  <span>Data: NASA LRO LOLA · JPL DE421 · validated against JPL Horizons · NASA Space Apps Challenge 2026</span>
+</footer>
+<script type="module" src="js/landing.js"></script>
+</body>
+</html>

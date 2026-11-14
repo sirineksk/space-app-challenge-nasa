@@ -205,7 +205,7 @@ export async function customSite(lat, lon) {
   return prepareSite({
     id: 'custom', name: 'Custom point', group: 'custom', custom: true,
     lat, lon, ground_m: r.ground_m, observer_m: 2, skyline: r.skyline, terrain: true,
-    notes: 'Computed in your browser from NASA LOLA terrain at 240 m per pixel (catalog sites use 80 m).',
+    notes: 'Computed in your browser from NASA LOLA terrain at 240 m per pixel (catalog sites use 80 m): within ~5 points on open ground, but next to steep walls it can overestimate sunlight.',
   });
 }
 

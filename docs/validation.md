@@ -51,11 +51,17 @@ The browser engine (`app/js/`) re-implements the same formulas. For 2026, catalo
 | Chandrayaan-3 | 48.6 / 48.6 | 100 / 100 | 4590 / 4590 |
 
 **Custom points** (clicked on the map) use lighter 240 m terrain computed in the browser.
-Rays start 360 m from the observer (1.5 grid cells) so the smoothed terrain does not shade
-a sharp crest. Against the 80 m skylines (sun % / Earth %, 240 m vs 80 m):
-Shackleton 84/85 · 50/50, de Gerlache GR1 80/82, Malapert 56/55 · 100/99, Nobile Rim 2 34/32,
-Haworth 54/56, Chang'e 7 86/81. Exception: at the exact pole Earth visibility is 45 % vs 23 %,
-because Earth grazes a ridge there; the UI labels custom points as "240 m terrain".
+Rays start 360 m from the observer (1.5 grid cells) so smoothed terrain does not shade a sharp crest.
+Against the 80 m skylines of all 15 terrain sites (2026, sunlight % 80 m → 240 m), 14 of 15 agree within
+~5 points (e.g. Shackleton 85.2 → 83.6, Malapert 54.9 → 56.0, Nobile Rim 2 31.9 → 33.7, Haworth 56.2 → 54.1)
+and Earth visibility within ~3 points. The exception is the **exact south pole** (26.2 → 55.5 %): there the
+terrain rises within 120–360 m in most directions, which a 240 m grid cannot resolve. The app labels custom
+points accordingly.
+
+**Bug fixed (pole singularity).** Exactly at a pole, the great-circle formula maps every bearing to the same
+longitude (atan2(0, 0)), so the old skyline of `south_pole` was traced along one line. All three
+implementations (pipeline, browser, API) now start rays 1e-6° (~3 cm) off the pole. Only `south_pole` changed:
+2026 sunlight 49.2 → **26.2 %**, Earth 23.4 → **29.3 %**, longest night 355 → **663 h**.
 
 ## Still to do
 

@@ -7,6 +7,7 @@ The website does every calculation in the browser, from these files:
   app/data/ephem/index.json  layout of the .bin files
   app/data/dem/*.bin         light int16 terrain grids (custom points, ECO-PATH)
   app/data/dem/index.json    grid geometry
+  app/data/thumbs/*.jpg      40 km terrain picture of each polar site
   app/data/map/              polar map: shaded relief (.jpg) + slope overlay (.png)
 
 Usage: python pipeline/export_app_data.py   (after build_ephemeris/build_horizons)
@@ -172,12 +173,53 @@ def export_map():
 
 
 
+def export_thumbs():
+    """Real terrain pictures for the website: one 40 km view per polar site + a Moon icon."""
+    from PIL import Image, ImageDraw, ImageFilter
+    from rasterio.windows import Window
+    d = OUT / "thumbs"
+    d.mkdir(parents=True, exist_ok=True)
+    sites = json.loads((OUT / "sites.json").read_text())["sites"]
+    with rasterio.open(find_raw("LDEM_80S_80MPP_ADJ")) as src:
+        res = abs(src.transform.a)
+        half = int(20_000 / res)
+        for s in sites:
+            if s["lat"] > -80.6:
+                continue
+            rho = 2 * 1737400 * np.tan(np.radians(45 + s["lat"] / 2))
+            x, y = rho * np.sin(np.radians(s["lon"])), rho * np.cos(np.radians(s["lon"]))
+            col, row = ~src.transform * (x, y)
+            win = Window(int(col) - half, int(row) - half, 2 * half, 2 * half)
+            z = src.read(1, window=win, boundless=True, fill_value=np.nan).astype(np.float32)
+            z = np.nan_to_num(z, nan=np.nanmean(z))
+            hs = hillshade(z, res, az_deg=300, alt_deg=12, exag=2.5)
+            lo_, hi_ = np.percentile(hs, [3, 99.5])
+            g = np.clip((hs - lo_) / (hi_ - lo_ + 1e-6), 0, 1) ** 1.25
+            img = Image.fromarray((g * 255).astype(np.uint8), "L").resize((480, 480), Image.LANCZOS)
+            img.convert("RGB").save(d / f"{s['id']}.jpg", quality=84, optimize=True, progressive=True)
+        # Moon icon: the whole 80 S disc, darkened towards the edge
+        size = 256
+        z = src.read(1, out_shape=(size * 2, size * 2), resampling=Resampling.average).astype(np.float32)
+        z = np.nan_to_num(z, nan=np.nanmean(z))
+        hs = hillshade(z, res * src.width / (size * 2), az_deg=315, alt_deg=30, exag=4)
+        yy, xx = np.mgrid[-1:1:complex(size * 2), -1:1:complex(size * 2)]
+        rr = np.hypot(xx, yy)
+        limb = np.sqrt(np.clip(1 - rr ** 2, 0, 1)) ** 0.6
+        g = np.clip((0.25 + 0.7 * hs) * (0.35 + 0.65 * limb), 0, 1)
+        rgba = np.zeros((size * 2, size * 2, 4), np.uint8)
+        rgba[..., 0] = g * 228; rgba[..., 1] = g * 232; rgba[..., 2] = g * 240
+        rgba[..., 3] = np.where(rr <= 1, 255, 0)
+        Image.fromarray(rgba, "RGBA").resize((size, size), Image.LANCZOS).save(APP / "assets" / "moon.png", optimize=True)
+    print(f"thumbs: {len(list(d.glob('*.jpg')))} sites + assets/moon.png")
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     export_sites()
     export_ephemeris()
     export_dems()
     export_map()
+    export_thumbs()
 
 
 if __name__ == "__main__":

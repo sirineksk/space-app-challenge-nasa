@@ -13,12 +13,10 @@ const SA = await series(A, t0, N), SB = await series(B, t0, N);
 const ya = yearSummary(A, Y), yb = yearSummary(B, Y);
 const { dist, bearing } = distanceBearing(A.lat, A.lon, B.lat, B.lon);
 
-$('#exIntro').innerHTML = `<b>Shackleton crater's rim</b> and the <b>exact south pole</b> are only
-  ${(dist / 1000).toFixed(1)} km apart. Over ${Y}, the rim point is in sunlight <span class="sun">${fmtPct(ya.sunPct, 0)}</span> of the time;
-  the pole only <span class="sun">${fmtPct(yb.sunPct, 0)}</span>. Drag the slider to see why.`;
-$('#exTake').innerHTML = `The rim sits on a ridge about ${fmtNum(A.ground_m - B.ground_m)} m higher, so its skyline is lower and the Sun clears it more often.
-  The longest night is ${fmtLong(ya.nightH)} on the rim versus ${fmtLong(yb.nightH)} at the pole.
-  Picking the exact spot matters as much as picking the region, and that is what this tool is for.`;
+$('#exIntro').innerHTML = `Drag through ${Y} to compare Shackleton's rim with the exact south pole, ${(dist / 1000).toFixed(1)} km away.`;
+$('#exTake').innerHTML = `The rim sits about ${fmtNum(A.ground_m - B.ground_m)} m higher, so the Sun clears its skyline more often:
+  <span class="sun">${fmtPct(ya.sunPct, 0)}</span> of ${Y} versus <span class="sun">${fmtPct(yb.sunPct, 0)}</span>, and a longest night of ${fmtLong(ya.nightH)} versus ${fmtLong(yb.nightH)}.
+  Picking the exact spot matters as much as picking the region.`;
 
 function strip() {
   const el = $('#exStrip');
@@ -39,36 +37,38 @@ function miniHorizon(site, s, k) {
   let d = `M0,${H}`;
   for (let a = -span / 2; a <= span / 2; a += .5) d += `L${X(az + a).toFixed(1)},${Yp(Math.max(lo, horizonAt(site.skyline, az + a))).toFixed(1)}`;
   d += `L${W},${H}Z`;
-  const r = .267 / (hi - lo) * H;
-  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;background:#070E1B;border-radius:10px;border:1px solid #1F2C3F">
-    <line x1="0" x2="${W}" y1="${Yp(0)}" y2="${Yp(0)}" stroke="#2F415C" stroke-dasharray="2 4"/>
-    <text x="6" y="${Yp(0) - 4}" fill="#5E6E85" font-size="10" font-family="IBM Plex Mono">0°</text>
-    <circle cx="${X(az)}" cy="${Yp(el)}" r="${Math.max(5, r)}" fill="#F2B544"/>
-    <circle cx="${X(az)}" cy="${Yp(el)}" r="${Math.max(5, r) + 6}" fill="none" stroke="#F2B544" stroke-opacity=".3"/>
-    <path d="${d}" fill="#1A2638" stroke="#57B8E8" stroke-opacity=".6"/>
-    <text x="${W / 2}" y="${H - 6}" fill="#94A3B8" font-size="10" font-family="IBM Plex Mono" text-anchor="middle">looking ${dirWord(compass(az))}, toward the Sun · ±${span / 2}°</text>
+  const r = Math.max(6, .267 / (hi - lo) * H);
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;border-radius:10px;border:1px solid #1F2D44;background:#0A1120">
+    <defs><linearGradient id="tg${site.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22324C"/><stop offset="1" stop-color="#0D1524"/></linearGradient></defs>
+    <line x1="0" x2="${W}" y1="${Yp(0)}" y2="${Yp(0)}" stroke="#2B3B55" stroke-dasharray="2 4"/>
+    <text x="8" y="${Yp(0) - 5}" fill="#56637A" font-size="10" font-family="Inter" font-weight="600">0° HORIZON</text>
+    <circle cx="${X(az)}" cy="${Yp(el)}" r="${r + 9}" fill="#F2B544" fill-opacity=".12"/>
+    <circle cx="${X(az)}" cy="${Yp(el)}" r="${r}" fill="#F2B544"/>
+    <path d="${d}" fill="url(#tg${site.id})" stroke="#57B8E8" stroke-opacity=".5"/>
+    <text x="${W / 2}" y="${H - 8}" fill="#8C98AB" font-size="10" font-family="Inter" font-weight="600" text-anchor="middle">LOOKING ${dirWord(compass(az)).toUpperCase()}, TOWARD THE SUN · ±${span / 2}°</text>
   </svg>`;
 }
 
-function card(site, s, k, name, ys) {
+function card(site, s, k, kicker, name, ys) {
   const lit = s.sunFrac[k] >= VISIBLE, margin = s.sunEl[k] - s.sunHz[k];
-  return `<div class="inner">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px">
-      <span style="font:italic 22px var(--serif)">${esc(name)}</span>
-      <span class="tag ${lit ? 'sun' : ''}">${lit ? 'SUNLIT' : 'IN SHADOW'}</span></div>
+  return `<section class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px">
+      <div style="display:flex;gap:12px;align-items:center"><span class="iconbtn" style="color:${lit ? 'var(--sun)' : 'var(--muted)'}"><span class="ms" style="font-size:17px">${lit ? 'wb_sunny' : 'dark_mode'}</span></span>
+        <div><div class="label ${lit ? 'sun' : 'earth'}">${kicker}</div><h3 style="font-size:19px;margin-top:2px">${esc(name)}</h3></div></div>
+      <span class="tag ${lit ? 'sun' : 'earth'}">${fmtPct(ys.sunPct)} sunlit</span></div>
     ${miniHorizon(site, s, k)}
-    <div style="margin-top:10px">
-      <div class="kv"><span>Sun vs skyline</span><span class="${margin > 0 ? 'sun' : 'muted'}">${margin > 0 ? fmtDeg(margin, 1) + ' above' : fmtDeg(-margin, 1, false) + ' behind'}</span></div>
-      <div class="kv"><span>Power, 1 m² panel</span><span>${fmtNum(s.power[k])} W</span></div>
-      <div class="kv"><span>Ground height</span><span>${fmtNum(site.ground_m)} m</span></div>
-      <div class="kv"><span>Sunlight over ${Y}</span><span class="sun">${fmtPct(ys.sunPct)}</span></div>
-    </div></div>`;
+    <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+      <div class="ministat"><div class="label">Right now</div><div class="v ${lit ? 'sun' : ''}" style="font-size:20px">${lit ? 'Sunlit' : 'In shadow'}</div>
+        <div class="note">${Math.abs(margin) < 0.27 ? `Sun grazing the ridge: ${Math.round(s.sunFrac[k] * 100)}% of its disk shows` : margin > 0 ? `Sun ${fmtDeg(margin, 1)} above the ridge` : `Sun ${fmtDeg(-margin, 1, false)} behind the ridge`}</div></div>
+      <div class="ministat"><div class="label">Power now · per day (${Y})</div><div class="v" style="font-size:20px">${fmtNum(s.power[k])} W</div>
+        <div class="note">${fmtNum(ys.energyWhDay)} Wh/day on average</div></div>
+    </div></section>`;
 }
 
 function render() {
   const k = +$('#exSlider').value;
   $('#exDate').textContent = fmtDate(t0 + k * HOUR);
-  $('#exCards').innerHTML = card(A, SA, k, 'Shackleton rim', ya) + card(B, SB, k, 'Exact south pole', yb);
+  $('#exCards').innerHTML = card(A, SA, k, 'Elevated crest', 'Shackleton rim', ya) + card(B, SB, k, `True pole · ${fmtNum(A.ground_m - B.ground_m)} m lower · ${(dist / 1000).toFixed(1)} km away`, 'Exact south pole', yb);
   strip();
 }
 // start on a moment where they differ, near the chosen date if possible

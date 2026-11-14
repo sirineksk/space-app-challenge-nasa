@@ -4,93 +4,74 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Learn · LUMINALUNA</title>
-<link rel="icon" href="assets/logo.svg">
+<link rel="icon" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
 <aside class="sidebar" id="sidebar"></aside>
 <main class="main">
-  <header class="top">
-    <div><h1>Why the south pole is tricky</h1><div class="sub">Four ideas, then a real example from our data.</div></div>
-    <div class="controls" id="controls"></div>
-  </header>
-
-  <div class="grid concepts">
-    <section class="card concept">
-      <svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid meet">
-        <defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#F2B544" stop-opacity=".0"/><stop offset="1" stop-color="#F2B544" stop-opacity=".25"/></linearGradient></defs>
-        <ellipse cx="200" cy="96" rx="170" ry="16" fill="none" stroke="#F2B544" stroke-dasharray="3 4" stroke-opacity=".7"/>
-        <circle cx="352" cy="88" r="9" fill="#F2B544"/>
-        <path d="M0 104 L60 104 L95 78 L125 104 L400 104 L400 150 L0 150Z" fill="#1A2638"/>
-        <path d="M125 104 L340 104 L340 110 L125 110Z" fill="#070E1B"/>
-        <path d="M95 78 L340 100" stroke="url(#g1)" stroke-width="1.2"/>
-        <text x="130" y="128" fill="#94A3B8" font-size="11" font-family="IBM Plex Mono">shadow ≈ 38 × the hill's height</text>
-        <text x="300" y="70" fill="#F2B544" font-size="11" font-family="IBM Plex Mono">Sun ≤ 1.5° high</text>
-      </svg>
-      <h3>The Sun always stays low</h3>
-      <p>The Moon's axis is tilted only 1.5° from the Sun's path, so at the pole the Sun slowly circles the horizon instead of rising high. Even a 100 m hill casts a shadow almost 4 km long, which is why some crater floors never see sunlight at all.</p>
-      <p class="x-only mono" style="font-size:12px">shadow length L = h / tan(e) — at e = 1.5°, L ≈ 38·h. One full circle of the Sun takes a synodic month (29.5 days).</p>
+  <div class="topbar" id="topbar"></div>
+  <div class="page stack">
+    <section style="position:relative;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;padding:8px 0 18px;border-bottom:1px solid var(--line)">
+      <div class="header-moon"></div>
+      <div style="position:relative"><h1 class="page-title" style="text-transform:uppercase;letter-spacing:.02em">Learn</h1>
+        <div class="subtitle">4 ideas to understand why landing sites are so different.</div></div>
+      <a class="btn" id="tryit" href="explore.html" style="position:relative">Try it yourself in Explore <span class="ms" style="font-size:16px">arrow_forward</span></a>
     </section>
 
-    <section class="card concept">
-      <svg viewBox="0 0 400 150">
-        <path d="M0 100 L40 94 L80 99 L130 88 L170 97 L230 92 L280 100 L330 90 L400 98 L400 150 L0 150Z" fill="#1A2638" stroke="#57B8E8" stroke-opacity=".5"/>
-        <path d="M200 30 C230 40 232 120 200 128 C168 120 170 40 200 30Z" fill="none" stroke="#57B8E8" stroke-dasharray="3 4" stroke-opacity=".8"/>
-        <circle cx="216" cy="56" r="10" fill="#57B8E8"/>
-        <text x="240" y="44" fill="#57B8E8" font-size="11" font-family="IBM Plex Mono">Earth's path, ~27 days</text>
-        <text x="240" y="124" fill="#94A3B8" font-size="11" font-family="IBM Plex Mono">hidden half of the time</text>
-      </svg>
-      <h3>Earth bobs up and down</h3>
-      <p>The Moon always shows the same face to Earth, so Earth barely moves in the lunar sky. But the Moon wobbles a little (libration), so Earth rises and sinks by about ±7° over 27 days. At the pole Earth sits right on the horizon: for about two weeks it is up, then two weeks it is hidden.</p>
-      <p class="x-only mono" style="font-size:12px">Libration in latitude ±6.7° (draconic month, 27.2 d). Earth's disk is ~1.9° wide seen from the Moon.</p>
-    </section>
+    <div class="grid concepts">
+      <section class="card concept">
+        <div class="sq sun"><span class="ms" style="font-size:18px">wb_sunny</span></div>
+        <div class="label earth" style="margin-top:12px">01</div>
+        <h3 style="margin-top:4px">The Sun always stays low (1.5° tilt)</h3>
+        <p>The Sun never climbs high above flat ground, so hills cast shadows kilometres long. A 100 m hill casts a shadow almost 4 km long.</p>
+        <p class="x-only mono" style="font-size:11.5px">L = h / tan(e) ≈ 38·h at e = 1.5°</p>
+        <div class="fact"><div><span class="label">Solar elevation</span><span class="sun" style="font-weight:600">1.5° max</span></div></div>
+      </section>
+      <section class="card concept">
+        <div class="sq earth"><span class="ms" style="font-size:18px">public</span></div>
+        <div class="label earth" style="margin-top:12px">02</div>
+        <h3 style="margin-top:4px">Earth rises and sets slowly (libration)</h3>
+        <p>The Moon wobbles slightly, so Earth slowly rises and sets near the horizon, and mountains can hide it for up to two weeks.</p>
+        <p class="x-only mono" style="font-size:11.5px">Libration in latitude ±6.7° over 27.2 days</p>
+        <div class="fact"><div><span class="label">Earth moves</span><span class="earth" style="font-weight:600">±6.7°</span></div></div>
+      </section>
+      <section class="card concept">
+        <div class="sq"><span class="ms" style="font-size:18px">landscape</span></div>
+        <div class="label earth" style="margin-top:12px">03</div>
+        <h3 style="margin-top:4px">The Moon's curve hides far mountains</h3>
+        <p>The Moon is small, so the ground curves away fast. Distant mountains sit lower than they look: 50 km away, about 720 m lower.</p>
+        <p class="x-only mono" style="font-size:11.5px">drop ≈ d² / 2R, R = 1,737 km</p>
+        <div class="fact"><div><span class="label">Skyline range</span><span style="font-weight:600">300 km</span></div></div>
+      </section>
+      <section class="card concept">
+        <div class="sq"><span class="ms" style="font-size:18px">dark_mode</span></div>
+        <div class="label earth" style="margin-top:12px">04</div>
+        <h3 style="margin-top:4px">No air: no twilight, black shadows</h3>
+        <p>Without air there is no dusk glow and shadows are pitch black. The Sun moves so slowly it can take hours to slide behind a hill.</p>
+        <p class="x-only mono" style="font-size:11.5px">Lit when ≥ 50 % of the disk clears the ridge</p>
+        <div class="fact"><div><span class="label">Counted as lit</span><span style="font-weight:600">½ disk</span></div></div>
+      </section>
+    </div>
 
-    <section class="card concept">
-      <svg viewBox="0 0 400 150">
-        <path d="M-40 150 Q200 40 440 150Z" fill="#1A2638" stroke="#57B8E8" stroke-opacity=".5"/>
-        <circle cx="70" cy="104" r="4" fill="#E8EDF4"/>
-        <line x1="70" y1="104" x2="390" y2="58" stroke="#E8EDF4" stroke-dasharray="4 4" stroke-opacity=".6"/>
-        <path d="M318 95 L336 64 L354 95Z" fill="#2A3A52" stroke="#94A3B8" stroke-opacity=".6"/>
-        <text x="40" y="128" fill="#94A3B8" font-size="11" font-family="IBM Plex Mono">you</text>
-        <text x="270" y="40" fill="#94A3B8" font-size="11" font-family="IBM Plex Mono">50 km away: 720 m lower</text>
-      </svg>
-      <h3>The Moon's curve hides far mountains</h3>
-      <p>The Moon is small (radius 1,737 km), so the ground curves away fast. A mountain 50 km away appears about 720 m lower than it really is. Our skylines therefore read the terrain up to 300 km away in 720 directions, and account for that curve exactly.</p>
-      <p class="x-only mono" style="font-size:12px">drop ≈ d² / 2R. Horizon angle = atan2((R+hₜ)cos γ − (R+hₛ), (R+hₜ)sin γ), γ = d/R.</p>
+    <section style="border-top:1px solid var(--line);padding-top:22px">
+      <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-end;margin-bottom:16px">
+        <div><span class="tag earth">Example</span>
+          <h2 class="serif" style="font-size:26px;margin:10px 0 4px">A few kilometres change everything</h2>
+          <div class="subtitle" id="exIntro">Drag through 2026 to compare Shackleton's rim with the exact south pole, 6.7 km away.</div></div>
+        <div class="card" style="padding:12px 16px;min-width:260px"><div class="label">Moment shown</div><div class="earth" id="exDate" style="font-weight:600;margin-top:4px"></div></div>
+      </div>
+      <input type="range" id="exSlider" min="0" max="8759" step="1" aria-label="Moment in 2026">
+      <div id="exStrip" style="margin-top:8px"></div>
+      <div class="grid site-grid" style="margin-top:16px" id="exCards"></div>
+      <div class="card" style="margin-top:16px;display:flex;gap:12px;align-items:flex-start;padding:16px 18px">
+        <span class="ms earth" style="font-size:20px">info</span><p style="margin:0;color:#C4CAD6" id="exTake"></p>
+      </div>
     </section>
-
-    <section class="card concept">
-      <svg viewBox="0 0 400 150">
-        <circle cx="200" cy="86" r="26" fill="#F2B544"/>
-        <path d="M0 150 L0 92 L120 84 L200 92 L280 80 L400 90 L400 150Z" fill="#1A2638" stroke="#57B8E8" stroke-opacity=".5"/>
-        <text x="236" y="56" fill="#F2B544" font-size="11" font-family="IBM Plex Mono">half the disk visible</text>
-        <text x="236" y="70" fill="#F2B544" font-size="11" font-family="IBM Plex Mono">= "sunlit" in our counts</text>
-      </svg>
-      <h3>No air: no twilight, black shadows</h3>
-      <p>Without an atmosphere there is no dusk glow and shadows are pitch black. Light depends only on how much of the Sun's disk clears the ridge. Because the Sun moves so slowly, it can take hours to slide behind a hill. We call a spot sunlit when at least half of the disk is visible.</p>
-      <p class="x-only mono" style="font-size:12px">visible fraction f = 1 − (acos x − x√(1−x²))/π, x = margin / disk radius. Power = 0.3 × 1361 W/m² × (1 AU/d)² × cos e × f.</p>
-    </section>
+    <footer class="credits" id="credits"></footer>
   </div>
-
-  <section class="card" style="margin-top:22px">
-    <div class="card-head">
-      <div><span class="tag earth">Real example</span> <h2 style="display:inline;margin-left:8px">A few kilometres change everything</h2></div>
-      <a class="btn sm" id="tryit" href="explore.html">Try it yourself <span class="ms" style="font-size:16px">arrow_forward</span></a>
-    </div>
-    <p id="exIntro" style="margin-top:0"></p>
-    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:14px 0 4px">
-      <span class="mono muted" style="font-size:12px">Drag through 2026</span><span class="mono" id="exDate"></span></div>
-    <input type="range" id="exSlider" min="0" max="8759" step="1">
-    <div id="exStrip" style="margin-top:6px"></div>
-    <div class="grid site-grid" style="margin-top:16px" id="exCards"></div>
-    <div class="inner" style="margin-top:16px;display:flex;gap:12px;align-items:flex-start">
-      <span class="ms earth" style="font-size:22px">info</span>
-      <p style="margin:0" id="exTake"></p>
-    </div>
-  </section>
-  <footer class="credits" id="credits"></footer>
 </main>
 <script type="module" src="js/learn.js"></script>
 </body>

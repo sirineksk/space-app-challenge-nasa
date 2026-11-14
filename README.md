@@ -26,8 +26,10 @@ data/
   horizons/              360° skyline of every polar site + yearly summaries
   raw/                   big original NASA files (NOT in git; see below)
 pipeline/                Python code that builds everything in data/
-app/                     the web app (static site, see app/README.md)
-index.html               redirects to app/explore.html (GitHub Pages)
+app/                     the website (static, see app/README.md)
+backend/                 the API (FastAPI, see backend/README.md)
+index.html               redirects to app/index.html (GitHub Pages)
+Dockerfile, render.yaml  deploy website + API together, later
 docs/                    method and validation notes
 ```
 

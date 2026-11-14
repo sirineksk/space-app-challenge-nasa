@@ -96,7 +96,9 @@ def terrain_elevation_angle_deg(h_site_m, h_terrain_m, dist_m):
 
 def destination_point(lat_deg, lon_deg, azimuth_deg, dist_m):
     """Great-circle destination from a start point, bearing and distance."""
-    lat1, lon1 = np.radians(lat_deg), np.radians(lon_deg)
+    # Exactly at a pole every bearing would give the same longitude (0/0 in atan2):
+    # nudge the start point by 1e-6 deg (~3 cm) so bearings keep their meaning.
+    lat1, lon1 = np.radians(np.clip(lat_deg, -89.999999, 89.999999)), np.radians(lon_deg)
     brg = np.radians(azimuth_deg)
     d = np.asarray(dist_m) / (R_MOON_KM * 1000.0)
     lat2 = np.arcsin(np.sin(lat1) * np.cos(d) + np.cos(lat1) * np.sin(d) * np.cos(brg))

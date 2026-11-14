@@ -67,7 +67,8 @@ export function fromPolarXY(x, y) {
 
 /** Great-circle destination point. */
 export function destination(latDeg, lonDeg, azDeg, distM) {
-  const la1 = latDeg * D2R, lo1 = lonDeg * D2R, b = azDeg * D2R, d = distM / R_M;
+  // at an exact pole every bearing would give the same longitude: nudge by 1e-6 deg (~3 cm)
+  const la1 = Math.max(-89.999999, Math.min(89.999999, latDeg)) * D2R, lo1 = lonDeg * D2R, b = azDeg * D2R, d = distM / R_M;
   const la2 = Math.asin(Math.sin(la1) * Math.cos(d) + Math.cos(la1) * Math.sin(d) * Math.cos(b));
   const lo2 = lo1 + Math.atan2(Math.sin(b) * Math.sin(d) * Math.cos(la1), Math.cos(d) - Math.sin(la1) * Math.sin(la2));
   return [la2 * R2D, ((lo2 * R2D + 540) % 360) - 180];

@@ -2,7 +2,7 @@
 import {
   initShell, onTime, state, $, $$, esc, href, siteParams, siteKey, siteFromKey, store, toast, loadSites,
   fmtCoords, fmtNum, fmtPct, fmtLong, fmtDate, fmtDay, isoMin, parseIsoUTC, DAY, getCompare, setCompare,
-  yearSummary, shortName, timelineSVG,
+  yearSummary, shortName, timelineSVG, thumbUrl, fmtLat, fmtLon,
 } from './ui.js';
 import { series, summarize } from './engine.js';
 import { HOUR } from './data.js';
@@ -19,9 +19,9 @@ const getSite = async k => { if (!siteCache.has(k)) siteCache.set(k, await siteF
 
 const METRICS = [
   ['sunPct', 'Time in sunlight', v => fmtPct(v), 'max', 'sun'],
-  ['nightH', 'Longest night', v => fmtLong(v), 'min', 'sun'],
-  ['earthPct', 'Time Earth in view', v => fmtPct(v), 'max', 'earth'],
-  ['noEarthH', 'Longest time without Earth', v => fmtLong(v), 'min', 'earth'],
+  ['nightH', 'Longest night', v => `${v} h <small>/ ${(v / 24).toFixed(1)} d</small>`, 'min', 'sun'],
+  ['earthPct', 'Time Earth is visible', v => fmtPct(v), 'max', 'earth'],
+  ['noEarthH', 'Longest time without Earth', v => `${v} h <small>/ ${(v / 24).toFixed(1)} d</small>`, 'min', 'earth'],
   ['energyWhDay', 'Energy per day, 1 m² panel', v => `${fmtNum(v)} Wh`, 'max', 'sun'],
 ];
 
@@ -37,24 +37,20 @@ function setUrl() {
 const options = (sel, exclude = []) => [['artemis3', 'Artemis III'], ['reference', 'Reference'], ['china', 'China'], ['clps', 'NASA CLPS'], ['india', 'India'], ['japan', 'Japan'], ['apollo', 'Apollo']]
   .map(([g, l]) => `<optgroup label="${l}">${catalog.filter(s => s.group === g && !exclude.includes(s.id)).map(s => `<option value="${s.id}" ${s.id === sel ? 'selected' : ''}>${esc(shortName(s))}</option>`).join('')}</optgroup>`).join('');
 
-function renderTools(cols) {
+function renderTools() {
   if (mode === 'sites') {
     const list = getCompare();
-    $('#tools').innerHTML = `
-      <select class="field" id="add" style="width:auto;max-width:230px" ${list.length >= 4 ? 'disabled' : ''}><option value="">+ Add site${list.length >= 4 ? ' (max 4)' : ''}</option>${options('', list)}</select>
-      <button class="btn sm ghost" id="csv"><span class="ms" style="font-size:16px">file_download</span> Export CSV</button>
-      <button class="btn sm ghost" onclick="print()"><span class="ms" style="font-size:16px">print</span> Print</button>`;
+    $('#tools').innerHTML = `<select class="field" id="add" style="width:auto;max-width:200px;font-weight:600" ${list.length >= 4 ? 'disabled' : ''}>
+      <option value="">${list.length >= 4 ? 'Max 4 sites' : '+ Add site'}</option>${options('', list)}</select>`;
     $('#add').onchange = e => { if (!e.target.value) return; setCompare([...getCompare(), e.target.value]); render(); };
   } else {
     $('#tools').innerHTML = `
-      <select class="field" id="dsite" style="width:auto;max-width:230px">${options(dateSite)}</select>
-      <label class="mono muted" style="font-size:12px">Date B</label>
-      <div class="when"><input type="datetime-local" id="t2" step="60" value="${isoMin(t2)}" min="${isoMin(state.range.startMs)}" max="${isoMin(state.range.endMs)}"><span class="utc">UTC</span></div>
-      <button class="btn sm ghost" id="csv"><span class="ms" style="font-size:16px">file_download</span> Export CSV</button>`;
+      <select class="field" id="dsite" style="width:auto;max-width:220px;font-weight:600">${options(dateSite)}</select>
+      <label class="label" for="t2">Date B</label>
+      <input class="field" type="datetime-local" id="t2" step="60" style="width:auto;color-scheme:dark" value="${isoMin(t2)}" min="${isoMin(state.range.startMs)}" max="${isoMin(state.range.endMs)}">`;
     $('#dsite').onchange = e => { dateSite = e.target.value; render(); };
     $('#t2').onchange = e => { const v = parseIsoUTC(e.target.value); if (v != null) { t2 = v; render(); } };
   }
-  $('#csv').onclick = () => exportCsv(cols);
 }
 
 // ------------------------------------------------------------------ columns
@@ -81,44 +77,43 @@ async function buildCols() {
 }
 
 function renderCols(cols) {
-  const el = $('#cols');
-  el.style.setProperty('--n', Math.max(cols.length, mode === 'sites' ? 2 : 2));
-  if (!cols.length) { el.innerHTML = `<div class="card loading" style="grid-column:1/-1">No sites yet. Add some with “+ Add site”, or from Explore.</div>`; return; }
+  const el = $('#cards');
+  el.style.setProperty('--n', Math.max(cols.length, 2));
+  if (!cols.length) { el.innerHTML = `<div class="card loading" style="grid-column:1/-1">No sites yet. Use “+ Add site”, or “Add to compare” on Explore.</div>`; $('#metrics').innerHTML = ''; return; }
+  el.innerHTML = cols.map((c, i) => `<div class="sitecard">
+      <div class="thumb" style="background-image:url(${thumbUrl(c.site)})"></div>
+      <span class="lab">${mode === 'sites' ? `SITE 0${i + 1}` : c.title.toUpperCase()}</span>
+      ${mode === 'sites' ? `<button class="x" data-rm="${esc(c.key)}" title="Remove"><span class="ms" style="font-size:14px">close</span></button>` : ''}
+      <div class="body"><a class="n" href="${href('site', siteParams(c.site))}">${esc(mode === 'sites' ? c.title : (c.site.custom ? 'Custom point' : shortName(c.site)))}</a>
+        <div class="note" style="margin-top:2px">${mode === 'sites' ? `${fmtCoords(c.site)}${c.site.terrain ? ` · ${fmtNum(c.site.ground_m)} m` : ''}` : fmtDate(c.t)}</div></div></div>`).join('');
+  $$('[data-rm]').forEach(b => b.onclick = () => { setCompare(getCompare().filter(k => k !== b.dataset.rm)); render(); });
+
   const best = {};
   for (const [k, , , dir] of METRICS) {
     const vals = cols.map(c => c.m[k]).filter(Number.isFinite);
-    best[k] = vals.length && cols.length > 1 ? (dir === 'max' ? Math.max(...vals) : Math.min(...vals)) : null;
-    if (vals.length > 1 && vals.every(v => v === vals[0])) best[k] = null;    // all equal: nobody "wins"
+    best[k] = vals.length > 1 ? (dir === 'max' ? Math.max(...vals) : Math.min(...vals)) : null;
+    if (vals.length > 1 && vals.every(v => v === vals[0])) best[k] = null;
   }
-  const y = new Date(state.t).getUTCFullYear();
-  el.innerHTML = cols.map(c => {
-    const ys = yearSummary(c.site, y);
-    return `<section class="card" style="padding:18px">
-      <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:4px">
-        <div style="min-width:0"><a href="${href('site', siteParams(c.site))}" style="font:italic 24px/1.1 var(--serif)">${esc(c.title)}</a>
-          <div class="mono muted" style="font-size:11px;margin-top:4px">${esc(c.sub)}</div></div>
-        ${mode === 'sites' ? `<button class="btn sm ghost" data-rm="${esc(c.key)}" title="Remove" style="padding:4px"><span class="ms" style="font-size:15px">close</span></button>` : ''}
-      </div>
-      ${METRICS.map(([k, label, f, , col]) => {
+  const icons = { sunPct: 'wb_sunny', nightH: 'dark_mode', earthPct: 'public', noEarthH: 'settings_input_antenna', energyWhDay: 'bolt' };
+  $('#metrics').innerHTML = METRICS.map(([k, label, f, , col]) => `<div class="metricgroup">
+      <h3><span class="ms ${col}" style="font-size:16px">${icons[k]}</span>${label}</h3>
+      <div class="cols4" style="--n:${Math.max(cols.length, 2)};gap:10px">${cols.map(c => {
         const win = best[k] != null && c.m[k] === best[k];
-        return `<div class="metric ${win ? 'win-' + col : ''}"><div class="l"><span>${label}</span>${win ? `<span class="best ${col}">best</span>` : ''}</div><div class="v">${f(c.m[k])}</div></div>`;
-      }).join('')}
-      ${mode === 'sites' && ys ? `<div class="note mono" style="margin-top:8px">Whole ${y}: <span class="sun">☀ ${fmtPct(ys.sunPct, 0)}</span> · <span class="earth">◉ ${fmtPct(ys.earthPct, 0)}</span></div>` : ''}
-    </section>`;
-  }).join('');
-  $$('[data-rm]').forEach(b => b.onclick = () => { setCompare(getCompare().filter(k => k !== b.dataset.rm)); render(); });
+        return `<div class="cell ${win ? 'best' : ''}"><div style="min-width:0"><div class="v ${win ? col : ''}">${f(c.m[k])}</div><div class="s">${esc(c.title)}</div></div>${win ? '<span class="badge">Best</span>' : ''}</div>`;
+      }).join('')}</div></div>`).join('');
 }
 
 function renderTimeline(cols) {
   const el = $('#tl');
   if (mode === 'sites') {
-    el.innerHTML = cols.length ? timelineSVG(cols.map(c => ({ label: c.title, sub: `☀ ${fmtPct(c.m.sunPct, 0)} · ◉ ${fmtPct(c.m.earthPct, 0)}`, series: c.ser })),
-      { t0: cols[0].ser.t0, hours: DAYS * 24, now: state.t, width: el.clientWidth, labelW: 170 }) : '';
-    $('#tlRange').textContent = `(${fmtDay(state.t)} – ${fmtDay(state.t + (DAYS * 24 - 1) * HOUR)} ${new Date(state.t + DAYS * DAY).getUTCFullYear()})`;
+    const lw = el.clientWidth < 600 ? 110 : 180;
+    el.innerHTML = cols.length ? timelineSVG(cols.map((c, i) => ({ label: `${i + 1}. ${c.title}`, sub: `Sun ${fmtPct(c.m.sunPct, 0)} · Earth ${fmtPct(c.m.earthPct, 0)}`, series: c.ser })),
+      { t0: cols[0].ser.t0, hours: DAYS * 24, now: state.t, width: el.clientWidth, labelW: lw }) : '';
+    $('#tlTitle').textContent = `30-Day Timeline (${fmtDay(state.t)} – ${fmtDay(state.t + (DAYS * 24 - 1) * HOUR)} ${new Date(state.t + DAYS * DAY).getUTCFullYear()})`;
   } else {
-    el.innerHTML = cols.map(c => timelineSVG([{ label: c.title, sub: `☀ ${fmtPct(c.m.sunPct, 0)} · ◉ ${fmtPct(c.m.earthPct, 0)}`, series: c.ser }],
-        { t0: c.ser.t0, hours: DAYS * 24, now: c.t, width: el.clientWidth, labelW: 170 })).join('<div style="height:10px"></div>');
-    $('#tlRange').textContent = '(each from its own landing date)';
+    el.innerHTML = cols.map(c => timelineSVG([{ label: c.title, sub: `Sun ${fmtPct(c.m.sunPct, 0)} · Earth ${fmtPct(c.m.earthPct, 0)}`, series: c.ser }],
+        { t0: c.ser.t0, hours: DAYS * 24, now: c.t, width: el.clientWidth, labelW: el.clientWidth < 600 ? 110 : 180 })).join('<div style="height:10px"></div>');
+    $('#tlTitle').textContent = '30-Day Timeline (each from its own landing date)';
   }
 }
 
@@ -166,13 +161,12 @@ function exportCsv(cols) {
 let lastCols = [];
 async function render() {
   $$('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.m === mode));
-  $('#windowNote').innerHTML = mode === 'sites'
-    ? `Numbers below are for a <b>30-day mission</b> starting at the date chosen at the top (${fmtDate(state.t)}).`
-    : `Date A is the date at the top. Each column covers 30 days from its own date.`;
+  $('#windowNote').textContent = mode === 'sites' ? `30 days from ${fmtDate(state.t)}` : 'each column: 30 days from its own date';
   const cols = await buildCols();
   lastCols = cols;
-  setUrl(); renderTools(cols); renderCols(cols); renderTimeline(cols); renderSummary(cols);
+  setUrl(); renderTools(); renderCols(cols); renderTimeline(cols); renderSummary(cols);
 }
+$('#csv').onclick = () => exportCsv(lastCols);
 $$('#tabs button').forEach(b => b.onclick = () => { mode = b.dataset.m; render(); });
 onTime(() => render());
 new ResizeObserver(() => renderTimeline(lastCols)).observe($('#tl'));

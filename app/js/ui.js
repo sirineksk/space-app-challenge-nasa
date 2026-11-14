@@ -1,5 +1,5 @@
 // ui.js — shared page shell (sidebar, date picker, Beginner/Expert), formatting and small widgets.
-import { ephemRange, getSite, loadSites, HOUR } from './data.js';
+import { ephemRange, getSite, loadSites, HOUR, dataUrl } from './data.js';
 import { prepareSite, customSite, runs, VISIBLE } from './engine.js';
 
 export const DAY = 24 * HOUR;
@@ -42,10 +42,7 @@ export const isoMin = ms => new Date(ms).toISOString().slice(0, 16);   // YYYY-M
 export const parseIsoUTC = s => { const t = Date.parse(s.length <= 16 ? s + ':00Z' : s); return Number.isFinite(t) ? t : null; };
 
 // ------------------------------------------------------------------ logo + shell
-export const LOGO = `<svg width="34" height="34" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-  <circle cx="18" cy="17" r="8" fill="#F2B544" fill-opacity=".92"/>
-  <path d="M3 27L11 19L16 24L22 17L33 27H3Z" fill="#111B2B" stroke="#57B8E8" stroke-width="1.5" stroke-linejoin="round"/>
-  <circle cx="27.5" cy="9.5" r="2.6" fill="#57B8E8"/></svg>`;
+export const LOGO = `<img class="emblem" src="${new URL('../assets/emblem.png', import.meta.url).href}" alt="LuminaLuna emblem" width="46" height="46">`;
 
 const PAGES = [
   ['explore', 'Explore', 'explore'],
@@ -78,39 +75,42 @@ export async function initShell(page) {
 
   const lastSite = store.get('lastSite', null);
   $('#sidebar').innerHTML = `
-    <div>
-      <a class="brand" href="${href('explore')}">${LOGO}<div><b>LUMINALUNA</b><small>Eco-Path</small></div></a>
-      <nav class="nav">${PAGES.map(([p, label, icon]) => {
-        let params = {};
-        if (p === 'site' && page !== 'site' && lastSite) params = lastSite;
-        return `<a data-page="${p}" class="${p === page ? 'on' : ''}" href="${p === 'site' && page === 'site' ? '#' : href(p, params)}"><span class="ms">${icon}</span><span>${label}</span></a>`;
-      }).join('')}</nav>
-    </div>
-    <div class="side-foot">NASA Space Apps 2026<br>LOLA 80 m · JPL DE421<br>validated vs <a href="https://ssd.jpl.nasa.gov/horizons/" target="_blank" rel="noopener">JPL Horizons</a></div>`;
+    <a class="brand" href="index.html">${LOGO}<div><b>LUMINALUNA</b><small>Eco-Path mission</small></div></a>
+    <nav class="nav">${PAGES.map(([p, label, icon]) => {
+      const params = p === 'site' && page !== 'site' && lastSite ? lastSite : {};
+      return `<a data-page="${p}" class="${p === page ? 'on' : ''}" href="${p === 'site' && page === 'site' ? '#' : href(p, params)}"><span class="ms">${icon}</span><span>${label}</span></a>`;
+    }).join('')}</nav>
+    <div class="side-foot">NASA Space Apps 2026<br>LOLA 80 m · JPL DE421</div>`;
 
-  const c = $('#controls');
+  const c = $('#topbar');
   if (c) {
     c.insertAdjacentHTML('afterbegin', `
       <div class="when" title="All times are UTC. Data covers ${new Date(state.range.startMs).getUTCFullYear()}–${new Date(state.range.endMs).getUTCFullYear()}.">
-        <button data-dt="-86400000" title="1 day earlier">−1d</button>
-        <button data-dt="-3600000" title="1 hour earlier"><span class="ms" style="font-size:18px">chevron_left</span></button>
-        <input type="datetime-local" id="when" step="60">
-        <span class="utc">UTC</span>
-        <button data-dt="3600000" title="1 hour later"><span class="ms" style="font-size:18px">chevron_right</span></button>
-        <button data-dt="86400000" title="1 day later">+1d</button>
-        <button data-now title="Back to the current time">Now</button>
+        <button class="d1" data-dt="-86400000" title="1 day earlier">−1d</button>
+        <button data-dt="-3600000" title="1 hour earlier"><span class="ms" style="font-size:16px">chevron_left</span></button>
+        <button class="date" id="whenBtn" title="Pick a date (UTC)"><span class="ms" style="font-size:16px">schedule</span><span id="whenTxt"></span></button>
+        <input type="datetime-local" id="when" step="60" tabindex="-1" aria-hidden="true">
+        <button data-dt="3600000" title="1 hour later"><span class="ms" style="font-size:16px">chevron_right</span></button>
+        <button class="d1" data-dt="86400000" title="1 day later">+1d</button>
+        <button class="now" data-now title="Back to the current time">Now</button>
       </div>
       <div class="seg" id="mode"><button data-m="b">Beginner</button><button data-m="x">Expert</button></div>`);
     const inp = $('#when');
     inp.min = isoMin(state.range.startMs); inp.max = isoMin(state.range.endMs);
     inp.addEventListener('change', () => { const t = parseIsoUTC(inp.value); if (t != null) setTime(t); });
+    $('#whenBtn').addEventListener('click', () => {
+      try { inp.showPicker(); } catch {
+        const v = prompt('Date and time (UTC), e.g. 2026-11-14T14:30', isoMin(state.t));
+        const t = v && parseIsoUTC(v.trim()); if (t != null) setTime(t);
+      }
+    });
     $$('.when button[data-dt]').forEach(b => b.addEventListener('click', () => setTime(state.t + Number(b.dataset.dt))));
     $('.when button[data-now]').addEventListener('click', () => setTime(Date.now(), true));
     $$('#mode button').forEach(b => b.addEventListener('click', () => setExpert(b.dataset.m === 'x')));
     syncControls();
   }
   const cr = $('#credits');
-  if (cr) cr.innerHTML = `<span>Terrain: NASA LRO LOLA (PGDA product 90) · Ephemeris: JPL DE421 · Positions checked against JPL Horizons to 0.05″</span>
+  if (cr) cr.innerHTML = `<span>Terrain: NASA LRO LOLA · Ephemeris: JPL DE421 · validated against JPL Horizons</span>
     <span>LUMINALUNA · ECO-PATH — NASA Space Apps Challenge 2026</span>`;
   // keep "now" ticking when the user hasn't picked a date
   setInterval(() => { if (state.live) { state.t = clampT(Date.now()); syncControls(); emit({ tick: true }); } }, 60000);
@@ -130,6 +130,7 @@ export function setTime(t, live = false) {
 function emit(info) { for (const fn of timeListeners) fn(state.t, info); }
 function syncControls() {
   const i = $('#when'); if (i) i.value = isoMin(state.t);
+  const w = $('#whenTxt'); if (w) w.textContent = fmtDate(state.t);
   $$('#mode button').forEach(b => b.classList.toggle('on', (b.dataset.m === 'x') === state.expert));
 }
 export function setExpert(on) {
@@ -144,7 +145,6 @@ export function refreshNav() {
     if (a.classList.contains('on') && p === 'site') return;
     a.href = href(p, p === 'site' && lastSite ? lastSite : {});
   });
-  $('.brand').href = href('explore');
 }
 
 export function toast(msg, ms = 2400) {
@@ -164,6 +164,7 @@ export async function siteFromKey(key) {
   const s = await getSite(key);
   return s ? prepareSite(s) : null;
 }
+export const thumbUrl = s => s && !s.custom && s.lat <= -80.6 ? dataUrl(`thumbs/${s.id}.jpg`) : new URL('../assets/moon.png', import.meta.url).href;
 export const siteKey = s => s.custom ? `custom:${s.lat.toFixed(4)},${s.lon.toFixed(4)}` : s.id;
 export const shortName = s => s.name.replace(/^Artemis III: /, '').replace(/ \(ESA study point (\w+)\)/, ' $1');
 export { loadSites };
@@ -211,17 +212,17 @@ export function timelineSVG(rows, { t0, hours, now, width, labelW = 150, showPow
     const x = X(d), dom = new Date(d).getUTCDate();
     const lab = (dom === 1 || dom % 5 === 0) && x - lastLab > 42 && x < x1 - 18;
     if (lab) lastLab = x;
-    g += `<line x1="${x}" x2="${x}" y1="${top}" y2="${H - 22}" stroke="#1F2C3F" stroke-width="${lab ? 1 : .5}" ${lab ? '' : 'stroke-dasharray="2 3"'}/>`;
+    g += `<line x1="${x}" x2="${x}" y1="${top}" y2="${H - 22}" stroke="#172235" stroke-width="${lab ? 1 : .5}" ${lab ? '' : 'stroke-dasharray="2 3"'}/>`;
     if (lab) g += `<text x="${x}" y="${H - 6}" fill="#94A3B8" font-size="10" font-family="IBM Plex Mono" text-anchor="middle">${fmtDay(d)}</text>`;
   }
   rows.forEach((r, i) => {
     const y = top + i * rowH, s = r.series;
     if (labelW > 0 && r.bandLabels) g += `<text x="0" y="${y + 11}" fill="#F2B544" font-size="11" font-family="IBM Plex Mono">${esc(r.bandLabels[0])}</text>
       <text x="0" y="${y + bandH + gap + 11}" fill="#57B8E8" font-size="11" font-family="IBM Plex Mono">${esc(r.bandLabels[1])}</text>`;
-    else if (labelW > 0) g += `<text x="0" y="${y + 13}" fill="#E8EDF4" font-size="14" font-family="Instrument Serif">${esc(r.label)}</text>
+    else if (labelW > 0) g += `<text x="0" y="${y + 13}" fill="#E8EDF4" font-size="14" font-family="Source Serif 4, Georgia, serif" font-weight="600">${esc(r.label)}</text>
       <text x="0" y="${y + 29}" fill="#94A3B8" font-size="10" font-family="IBM Plex Mono">${esc(r.sub ?? '')}</text>`;
-    g += `<rect x="${x0}" y="${y}" width="${x1 - x0}" height="${bandH}" rx="3" fill="#070E1B"/>`;
-    g += `<rect x="${x0}" y="${y + bandH + gap}" width="${x1 - x0}" height="${bandH}" rx="3" fill="#070E1B"/>`;
+    g += `<rect x="${x0}" y="${y}" width="${x1 - x0}" height="${bandH}" rx="3" fill="#0A1120"/>`;
+    g += `<rect x="${x0}" y="${y + bandH + gap}" width="${x1 - x0}" height="${bandH}" rx="3" fill="#0A1120"/>`;
     for (const [a, b] of runs(s.n, k => s.valid[k] && s.sunFrac[k] >= VISIBLE))
       g += `<rect x="${X(s.t0 + a * HOUR)}" y="${y}" width="${Math.max(1, X(s.t0 + b * HOUR) - X(s.t0 + a * HOUR))}" height="${bandH}" fill="#F2B544"><title>Sunlight ${fmtDayHM(s.t0 + a * HOUR)} → ${fmtDayHM(s.t0 + b * HOUR)}</title></rect>`;
     for (const [a, b] of runs(s.n, k => s.valid[k] && s.earthFrac[k] >= VISIBLE))
@@ -275,7 +276,8 @@ const P = {
   settings_input_antenna: '<path d="M12 13v8M8.5 21h7M8 9.5a5.5 5.5 0 0 1 8 0M5.2 6.7a9.5 9.5 0 0 1 13.6 0"/><circle cx="12" cy="12.5" r="1.3" fill="currentColor"/>',
   print: '<path d="M7 9V4h10v5M7 17H4.5V9.5h15V17H17M7 14h10v6H7z"/>',
   bolt: '<path d="M13 3L5 13.5h6L10 21l8-10.5h-6z"/>', dark_mode: '<path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5z"/>',
-  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>', swap_horiz: '<path d="M4 9h15M15 5l4 4-4 4M20 15H5M9 11l-4 4 4 4"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>', schedule: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  landscape: '<path d="M3 19l6-9 4 6 3-4 5 7z"/>', menu: '<path d="M4 7h16M4 12h16M4 17h16"/>', battery: '<rect x="3" y="7" width="16" height="10" rx="2"/><path d="M21 10.5v3"/>', swap_horiz: '<path d="M4 9h15M15 5l4 4-4 4M20 15H5M9 11l-4 4 4 4"/>',
 };
 export const ic = (name, size = 18) => `<svg class="ic" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[name] ?? P.info}</svg>`;
 function upgradeIcons(root) {
