@@ -10,7 +10,7 @@ T = "2026-11-14T14:30"
 def test_health_and_meta():
     assert c.get("/api/health").json() == {"status": "ok"}
     m = c.get("/api/meta").json()
-    assert m["sites"] == 28 and m["data_from"].startswith("2025-01-01") and m["data_to"].startswith("2030-12-31")
+    assert m["sites"] == 23 and m["data_from"].startswith("2025-01-01") and m["data_to"].startswith("2030-12-31")
 
 
 def test_sites_list_and_detail():

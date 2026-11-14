@@ -25,7 +25,7 @@ $('#thumb').style.backgroundImage = `url(${thumbUrl(site)})`;
 $('#subtitle').innerHTML = `${fmtCoords(site)} · ${site.terrain ? `Elevation ${fmtNum(site.ground_m)} m` : 'flat horizon (no terrain data here)'}${site.custom ? ' · <span class="earth">240 m terrain</span>' : ''}`;
 
 const all = await loadSites();
-const groups = [['artemis3', 'Artemis III candidates'], ['reference', 'Reference points'], ['china', 'China'], ['clps', 'NASA CLPS'], ['india', 'India'], ['japan', 'Japan'], ['apollo', 'Apollo']];
+const groups = [['artemis3', 'Artemis III candidates'], ['reference', 'Reference points'], ['clps', 'NASA CLPS'], ['india', 'India'], ['japan', 'Japan'], ['apollo', 'Apollo']];
 $('#pick').innerHTML = (site.custom ? `<option value="" selected>Custom point</option>` : '') + groups.map(([g, l]) =>
   `<optgroup label="${l}">${all.filter(s => s.group === g).map(s => `<option value="${s.id}" ${s.id === site.id ? 'selected' : ''}>${esc(shortName(s))}</option>`).join('')}</optgroup>`).join('');
 $('#pick').onchange = e => { if (e.target.value) location.href = href('site', { id: e.target.value }); };

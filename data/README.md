@@ -11,7 +11,7 @@ Sun and Earth line up with no hidden offset. Longitudes are east-positive, in
 | --- | --- |
 | `id` | short unique key, used for file names |
 | `name` | display name |
-| `group` | apollo · china · india · japan · clps · artemis3 · reference |
+| `group` | apollo · india · japan · clps · artemis3 · reference |
 | `agency`, `status` | who, and landed / planned / candidate |
 | `lat_deg`, `lon_deg` | coordinates (empty = TODO, see `notes`) |
 | `coord_type` | `landed` (measured) · `target` · `region center` · `best point in region` · `approximate` · `TODO` |

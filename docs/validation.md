@@ -31,10 +31,8 @@ we use DE421.
 ## First illumination results (2026, 2 m mast)
 
 The best-known high-illumination spots near the pole come out as the best lit
-in our catalog: Shackleton rim 85%, de Gerlache rim 82%, the peak near
-Shackleton (Chang'e 7 target) 81%. Malapert Massif sees Earth 99% of the
-time, as expected for a mountain facing the nearside. The far-side Chang'e 4
-and 6 sites never see Earth.
+in our catalog: Shackleton rim 85% and de Gerlache rim 82%. Malapert Massif
+sees Earth 99% of the time, as expected for a mountain facing the nearside.
 
 Adding the 240 m map (mountains 300+ km away) changed no polar result: the
 lunar curve hides such distant terrain.

@@ -34,7 +34,7 @@ function setUrl() {
 }
 
 // ------------------------------------------------------------------ toolbars
-const options = (sel, exclude = []) => [['artemis3', 'Artemis III'], ['reference', 'Reference'], ['china', 'China'], ['clps', 'NASA CLPS'], ['india', 'India'], ['japan', 'Japan'], ['apollo', 'Apollo']]
+const options = (sel, exclude = []) => [['artemis3', 'Artemis III'], ['reference', 'Reference'], ['clps', 'NASA CLPS'], ['india', 'India'], ['japan', 'Japan'], ['apollo', 'Apollo']]
   .map(([g, l]) => `<optgroup label="${l}">${catalog.filter(s => s.group === g && !exclude.includes(s.id)).map(s => `<option value="${s.id}" ${s.id === sel ? 'selected' : ''}>${esc(shortName(s))}</option>`).join('')}</optgroup>`).join('');
 
 function renderTools() {

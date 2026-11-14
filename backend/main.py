@@ -91,7 +91,7 @@ def meta():
 
 
 @app.get("/api/sites", tags=["sites"], summary="List catalog sites (with yearly summaries)")
-def list_sites(group: Optional[str] = Query(None, description="artemis3, reference, apollo, china, clps, india, japan"),
+def list_sites(group: Optional[str] = Query(None, description="artemis3, reference, apollo, clps, india, japan"),
                q: Optional[str] = Query(None, description="Search in name / agency / status"),
                year: Optional[int] = Query(None, description="Sort by sunlight in this year")):
     out = E.sites()
