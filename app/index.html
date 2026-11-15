@@ -77,19 +77,11 @@
       <p>Near the lunar south pole, the Sun skims the horizon and Earth rises and sets slowly. A few kilometres decide between power and darkness, contact and silence. We compute sunlight and direct Earth visibility for candidate sites and for any point you click, using real NASA lunar terrain.</p>
       <p class="muted">By combining NASA LOLA laser topography with JPL planetary ephemerides, LUMINALUNA helps mission planners find sites with the most sunlight and the most time in direct radio contact with Earth.</p>
     </div>
-    <div class="card mcard">
-      <figure class="mfig">
-        <img src="assets/photos/mission-diagram.webp?v=8" alt="Illustration of the Sun's path in amber and Earth's path in blue looping around the horizon of a lunar site" width="1260" height="680" loading="lazy">
-        <figcaption><span class="lg s">Sun's path</span><span class="lg e">Earth's path</span><span class="tag">Illustration</span></figcaption>
-      </figure>
-      <h3 class="mtitle">The sky above Shackleton rim, from real data</h3>
-      <p class="msub">At the south pole, the Sun and Earth never climb high. They circle just above the hills, so a single ridge can hide them for days.</p>
-      <div class="mstats">
-        <div><b class="sun" id="mSun">–</b><span id="mSunL">of the year in sunlight</span></div>
-        <div><b class="earth" id="mEarth">–</b><span id="mEarthL">of the year with Earth in view</span></div>
-      </div>
-      <div id="mSky" aria-label="Chart of the real horizon at Shackleton rim with the Sun and Earth positions over the next 30 days"></div>
-      <p class="mnote">The grey shape is the real horizon, measured by NASA's LOLA laser. Each dot shows where the Sun or Earth will be over the next 30 days. A bright dot is above the hills: <span class="sun">sunlight for solar panels</span> or <span class="earth">a direct radio link to Earth</span>. A faded dot is hidden behind the terrain.</p>
+    <div class="card">
+      <img class="mimg" src="assets/photos/mission-diagram.webp?v=9" alt="Illustration of the Sun's path in amber and Earth's path in blue looping around the horizon of a lunar site" width="1260" height="680" loading="lazy">
+      <div class="card-head" style="margin-bottom:8px"><span class="label">Horizon · 360° around Shackleton rim</span><span class="label sun" id="mSun"></span></div>
+      <div id="mSky"></div>
+      <div class="note" style="margin-top:6px">The grey shape is the real horizon from NASA terrain. The yellow dots show where the Sun will be over the next 30 days.</div>
     </div>
   </section>
 
