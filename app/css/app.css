@@ -349,3 +349,34 @@ footer.credits { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(
 .sidebar { transition: top .35s cubic-bezier(.2,.8,.2,1); }
 .sidebar.bar-hidden { top: -110px; }
 @media (prefers-reduced-motion: reduce) { .sidebar { transition: none; } }
+
+/* ================================================================ top bar styled like the home page, on its own image (both themes) */
+.sidebar, [data-theme="dark"] .sidebar, [data-theme="light"] .sidebar {
+  background: linear-gradient(rgba(4,7,14,.2), rgba(4,7,14,.4)), url(../assets/header-pages.webp?v=8) center / cover no-repeat;
+  border-bottom: 1px solid rgba(255,255,255,.08); color-scheme: dark; }
+.sidebar .seg { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); }
+.sidebar .seg button { color: #C4CAD6; }
+.sidebar .seg button:hover { color: #fff; }
+.sidebar .seg button.on { background: rgba(255,255,255,.14); color: #fff; box-shadow: none; }
+.sidebar .themebtn { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.15); color: #E8ECF2; }
+.sidebar .themebtn:hover { border-color: rgba(255,255,255,.35); }
+.sidebar .emblem { box-shadow: 0 0 0 1px rgba(255,255,255,.18); }
+
+@media (min-width: 861px) {
+  .sidebar { height: 70px; padding: 0 max(28px, calc((100vw - 1380px) / 2 + 28px)); }
+  .sidebar .brand { margin-left: clamp(0px, 5vw, 110px); }
+  .sidebar .emblem { width: 58px; height: 58px; }
+  .main { min-height: calc(100vh - 70px); }
+  .nav { gap: 44px; }
+  .nav-ink, .nav-line { display: none; }
+  .nav a { padding: 10px 2px; border-radius: 0; color: #C4CAD6; font: 600 16px Inter, system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+  .nav { gap: 46px; }
+  .nav a:hover, .nav a.hot { color: #fff; }
+  .nav a.on { color: #fff; font-weight: 600; }
+  .nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 2px;
+    background: linear-gradient(90deg, var(--sun-fill), var(--earth-fill)); transform: scaleX(0); transition: transform .35s cubic-bezier(.3,1.2,.4,1); }
+  .nav a:hover::after, .nav a:focus-visible::after, .nav a.on::after { transform: scaleX(1); }
+}
+@media (max-width: 860px) {
+  .sidebar { background-position: center; }
+}
