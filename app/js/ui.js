@@ -1,6 +1,6 @@
 // ui.js — shared page shell (sidebar, date picker, Beginner/Expert), formatting and small widgets.
-import { ephemRange, getSite, loadSites, HOUR, dataUrl } from './data.js';
-import { prepareSite, customSite, runs, VISIBLE } from './engine.js';
+import { ephemRange, getSite, loadSites, HOUR, dataUrl } from './data.js?v=8';
+import { prepareSite, customSite, runs, VISIBLE } from './engine.js?v=8';
 
 export const DAY = 24 * HOUR;
 export const $ = (sel, root = document) => root.querySelector(sel);

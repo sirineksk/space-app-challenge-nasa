@@ -2,10 +2,10 @@
 import {
   initShell, onTime, state, $, $$, esc, href, siteParams, store, toast, loadSites, siteFromKey, siteKey, addCompare, refreshNav,
   fmtLat, fmtLon, fmtCoords, fmtNum, fmtPct, fmtLong, fmtDur, fmtDeg, yearSummary, verdict, shortName, countUp,
-} from './ui.js';
-import { prepareSite, yearStats, statusAt, slopeAt } from './engine.js';
-import { toPolarXY, fromPolarXY } from './geo.js';
-import { mapMeta, dataUrl } from './data.js';
+} from './ui.js?v=8';
+import { prepareSite, yearStats, statusAt, slopeAt } from './engine.js?v=8';
+import { toPolarXY, fromPolarXY } from './geo.js?v=8';
+import { mapMeta, dataUrl } from './data.js?v=8';
 
 await initShell('explore');
 

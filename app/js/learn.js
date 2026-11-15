@@ -1,8 +1,8 @@
 // learn.js — the real example: Shackleton rim vs the exact south pole through 2026.
-import { initShell, $, esc, href, fmtDate, fmtPct, fmtNum, fmtDeg, fmtLong, fmtDay, siteFromKey, yearSummary, timelineSVG, state, onTime, dirWord } from './ui.js';
-import { series, VISIBLE } from './engine.js';
-import { distanceBearing, horizonAt, compass } from './geo.js';
-import { HOUR } from './data.js';
+import { initShell, $, esc, href, fmtDate, fmtPct, fmtNum, fmtDeg, fmtLong, fmtDay, siteFromKey, yearSummary, timelineSVG, state, onTime, dirWord } from './ui.js?v=8';
+import { series, VISIBLE } from './engine.js?v=8';
+import { distanceBearing, horizonAt, compass } from './geo.js?v=8';
+import { HOUR } from './data.js?v=8';
 
 await initShell('learn');
 $('#tryit').href = href('explore');

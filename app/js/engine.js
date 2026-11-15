@@ -2,8 +2,8 @@
 import {
   makeObserver, azEl, angularRadius, visibleFraction, horizonAt, solarPowerW,
   R_SUN_KM, R_EARTH_KM, toPolarXY, destination, terrainAngle, distanceBearing,
-} from './geo.js';
-import { ephemHours, HOUR, loadDEMs } from './data.js';
+} from './geo.js?v=8';
+import { ephemHours, HOUR, loadDEMs } from './data.js?v=8';
 
 export const VISIBLE = 0.5;          // body "visible" when >= half its disk is above the skyline
 export const AZ_STEP = 0.5;
@@ -258,7 +258,7 @@ export async function nearestEarthSpot(site, startMs, { days = 30, radiusM = 500
   cands.sort((a, b) => a.d - b.d);
   const target = Math.min(100, Math.max(here.earthPct + 20, 50));
   let best = null, bestPct = here.earthPct;
-  const { fromPolarXY } = await import('./geo.js');
+  const { fromPolarXY } = await import('./geo.js?v=8');
   for (let i = 0; i < cands.length; i++) {
     const c = cands[i];
     if (best && c.d > best.d + 1) break;                 // nearest qualifying ring found

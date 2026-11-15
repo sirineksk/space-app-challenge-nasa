@@ -3,10 +3,10 @@ import {
   initShell, onTime, setTime, state, $, $$, esc, href, siteParams, siteKey, siteFromKey, store, toast, addCompare, loadSites,
   fmtLat, fmtLon, fmtCoords, fmtNum, fmtPct, fmtLong, fmtDur, fmtDeg, fmtDate, fmtDayHM, fmtDay, MONTHS, DAY,
   yearSummary, shortName, timelineSVG, timelinePick, refreshNav, dirWord, thumbUrl, countUp,
-} from './ui.js';
-import { statusAt, series, summarize, earthWindows, yearStats, nearestEarthSpot, VISIBLE } from './engine.js';
-import { angularRadius, compass, R_EARTH_KM } from './geo.js';
-import { HOUR } from './data.js';
+} from './ui.js?v=8';
+import { statusAt, series, summarize, earthWindows, yearStats, nearestEarthSpot, VISIBLE } from './engine.js?v=8';
+import { angularRadius, compass, R_EARTH_KM } from './geo.js?v=8';
+import { HOUR } from './data.js?v=8';
 
 await initShell('site');
 

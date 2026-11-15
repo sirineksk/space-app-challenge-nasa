@@ -245,3 +245,20 @@ body.landing::before { display: none; }
 .lnav { transition: top .35s cubic-bezier(.2,.8,.2,1); }
 .lnav.bar-hidden { top: -110px; }
 @media (prefers-reduced-motion: reduce) { .lnav { transition: none; } }
+
+/* mission card: cleaner illustration + real chart with plain-language text */
+.mcard { padding: 22px; }
+.mfig { position: relative; margin: 0 0 18px; border-radius: 12px; overflow: hidden; background: #070B14; }
+.mfig img { display: block; width: 100%; height: auto; }
+.mfig figcaption { position: absolute; left: 12px; right: 12px; bottom: 10px; display: flex; gap: 14px; align-items: center; font: 600 12.5px var(--sans); color: #E8ECF2; }
+.mfig .lg::before { content: ""; display: inline-block; width: 18px; height: 3px; border-radius: 2px; margin-right: 7px; vertical-align: middle; }
+.mfig .lg.s::before { background: var(--sun); } .mfig .lg.e::before { background: var(--earth); }
+.mfig .tag { margin-left: auto; font-weight: 500; color: #AEB7C6; background: rgba(5,8,14,.6); padding: 3px 8px; border-radius: 6px; }
+.mtitle { font: 600 24px/1.25 var(--serif); margin: 0 0 6px; color: var(--text); }
+.msub { font-size: 15.5px !important; line-height: 1.6 !important; color: #AEB7C6; margin: 0 0 16px; }
+.mstats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.mstats > div { background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.mstats b { font: 600 30px/1 var(--serif); }
+.mstats span { font-size: 13.5px; color: #AEB7C6; }
+.mnote { font-size: 14px !important; line-height: 1.6 !important; color: #AEB7C6; margin: 10px 0 0; }
+.mnote .sun, .mnote .earth { font-weight: 600; }

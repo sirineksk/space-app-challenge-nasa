@@ -3,9 +3,9 @@ import {
   initShell, onTime, state, $, $$, esc, href, siteParams, siteKey, siteFromKey, store, toast, loadSites,
   fmtCoords, fmtNum, fmtPct, fmtLong, fmtDate, fmtDay, isoMin, parseIsoUTC, DAY, getCompare, setCompare,
   yearSummary, shortName, timelineSVG, thumbUrl, fmtLat, fmtLon, countUp,
-} from './ui.js';
-import { series, summarize } from './engine.js';
-import { HOUR } from './data.js';
+} from './ui.js?v=8';
+import { series, summarize } from './engine.js?v=8';
+import { HOUR } from './data.js?v=8';
 
 await initShell('compare');
 const DAYS = 30;
