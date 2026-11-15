@@ -235,3 +235,13 @@ body.landing::before { background: linear-gradient(180deg, rgba(3,5,10,.08), rgb
 .team .member b { transition: color .3s ease; }
 .team .member:hover b { color: var(--sun); }
 
+
+/* v7: the space photo covers the whole page (top to bottom), scrolling with it */
+html:has(body.landing) { background: #020306; }
+body.landing { min-height: 100vh; background: linear-gradient(180deg, rgba(3,5,10,.08), rgba(3,5,10,.3)), url(../assets/bg-landing.webp) center top / cover no-repeat; background-attachment: scroll; }
+body.landing::before { display: none; }
+
+/* top bar hides while scrolling down, comes back when scrolling up */
+.lnav { transition: top .35s cubic-bezier(.2,.8,.2,1); }
+.lnav.bar-hidden { top: -110px; }
+@media (prefers-reduced-motion: reduce) { .lnav { transition: none; } }

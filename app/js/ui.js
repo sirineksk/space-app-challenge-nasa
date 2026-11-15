@@ -87,6 +87,7 @@ export async function initShell(page) {
   if (!$('.backdrop')) document.body.insertAdjacentHTML('afterbegin', '<div class="backdrop" aria-hidden="true"><i class="bd-stars"></i><i class="bd-dust"></i><i class="bd-moon"></i></div>');
   initTheme();
   initNavInk();
+  hideBarOnScroll(document.getElementById('sidebar'));
 
   const c = $('#topbar');
   if (c) {
@@ -139,6 +140,21 @@ function syncControls() {
   const w = $('#whenTxt'); if (w) w.textContent = fmtDate(state.t);
   $$('#mode button').forEach(b => b.classList.toggle('on', (b.dataset.m === 'x') === state.expert));
 }
+// top bar: hides while scrolling down, comes back when scrolling up (self-contained on purpose)
+function hideBarOnScroll(bar, isLocked = () => false) {
+  if (!bar) return;
+  let lastY = window.scrollY, ticking = false;
+  const update = () => {
+    ticking = false;
+    const y = window.scrollY, dy = y - lastY;
+    if (Math.abs(dy) < 6) return;
+    bar.classList.toggle('bar-hidden', dy > 0 && y > bar.offsetHeight + 20 && !isLocked());
+    lastY = y;
+  };
+  window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  bar.addEventListener('focusin', () => bar.classList.remove('bar-hidden'));
+}
+
 // ------------------------------------------------------------------ top bar: sliding pill + underline
 function initNavInk() {
   const nav = $('#sidebar .nav'); if (!nav) return;

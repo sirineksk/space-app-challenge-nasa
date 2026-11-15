@@ -20,6 +20,23 @@ const TOP = [
 $('#logo').innerHTML = LOGO;
 $('#logo').title = 'LuminaLuna';
 $('#burger').onclick = () => $('#lmenu').classList.toggle('open');
+hideBarOnScroll(document.querySelector('.lnav'), () => document.getElementById('lmenu').classList.contains('open'));
+
+// top bar: hides while scrolling down, comes back when scrolling up (self-contained on purpose)
+function hideBarOnScroll(bar, isLocked = () => false) {
+  if (!bar) return;
+  let lastY = window.scrollY, ticking = false;
+  const update = () => {
+    ticking = false;
+    const y = window.scrollY, dy = y - lastY;
+    if (Math.abs(dy) < 6) return;
+    bar.classList.toggle('bar-hidden', dy > 0 && y > bar.offsetHeight + 20 && !isLocked());
+    lastY = y;
+  };
+  window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  bar.addEventListener('focusin', () => bar.classList.remove('bar-hidden'));
+}
+
 
 // ------------------------------------------------------------------ check-a-site form
 const polar = sites.filter(s => s.terrain).sort((a, b) => (b.summary[Y]?.sun_pct ?? 0) - (a.summary[Y]?.sun_pct ?? 0));
