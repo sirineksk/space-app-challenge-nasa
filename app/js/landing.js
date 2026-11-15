@@ -117,33 +117,19 @@ kio.observe($('#kGrid'));
 
 // ------------------------------------------------------------------ mission skyline (real data)
 async function missionSky() {
-  const site = byId('shackleton_rim_sr1'), s = prepareSite(site), win = await series(s, now, 30 * 24);
-  const el = $('#mSky'), W = Math.max(300, el.clientWidth), H = 230, B = 22, L = 34;
-  let lo = -2, hi = 2;
-  s.skyline.forEach(v => { lo = Math.min(lo, v); hi = Math.max(hi, v); });
-  for (let i = 0; i < win.n; i++) if (win.valid[i]) { lo = Math.min(lo, win.sunEl[i], win.earthEl[i]); hi = Math.max(hi, win.sunEl[i], win.earthEl[i]); }
-  lo = Math.floor(lo - .5); hi = Math.ceil(hi + .5);
-  const X = az => L + az / 360 * (W - L), Yp = e => 6 + (hi - e) / (hi - lo) * (H - B - 6);
-  let d = `M${L},${H - B}`;
-  s.skyline.forEach((v, i) => { d += `L${X(i * 360 / s.skyline.length).toFixed(1)},${Yp(v).toFixed(1)}`; });
-  d += `L${W},${Yp(s.skyline[0]).toFixed(1)}L${W},${H - B}Z`;
-  let dots = '';
-  for (let i = 0; i < win.n; i += 4) if (win.valid[i]) {
-    const sOn = win.sunFrac[i] >= VISIBLE, eOn = win.earthFrac[i] >= VISIBLE;
-    dots += `<circle cx="${X(win.earthAz[i]).toFixed(1)}" cy="${Yp(win.earthEl[i]).toFixed(1)}" r="2" fill="#57B8E8" opacity="${eOn ? .95 : .22}"/>`;
-    dots += `<circle cx="${X(win.sunAz[i]).toFixed(1)}" cy="${Yp(win.sunEl[i]).toFixed(1)}" r="2" fill="#F2B544" opacity="${sOn ? .95 : .22}"/>`;
-  }
-  const step = (hi - lo) > 10 ? 4 : 2;
-  let grid = '';
-  for (let e = Math.ceil(lo / step) * step; e <= hi; e += step) grid += `<line x1="${L}" x2="${W}" y1="${Yp(e)}" y2="${Yp(e)}" stroke="#1E2A3D" ${e === 0 ? 'stroke="#3A4A63" stroke-dasharray="3 4"' : ''}/><text x="${L - 6}" y="${Yp(e) + 3.5}" font-size="10.5" fill="#8C98AB" text-anchor="end" font-family="Inter">${e > 0 ? '+' : ''}${e}°</text>`;
-  const lab = [['N', 0], ['E', 90], ['S', 180], ['W', 270], ['N', 360]].map(([c, az]) => `<text x="${Math.min(W - 6, X(az))}" y="${H - 5}" font-size="11" fill="#AEB7C6" font-family="Inter" font-weight="600" text-anchor="middle">${c}</text>`).join('');
-  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" role="img"><defs><linearGradient id="mt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A3954"/><stop offset="1" stop-color="#101827"/></linearGradient></defs>
-    ${grid}${dots}<path d="${d}" fill="url(#mt)" stroke="#8FA1BA" stroke-opacity=".6"/>${lab}</svg>`;
-  const m = yearSummary(site, Y);
-  $('#mSun').textContent = fmtPct(m.sunPct, 0);
-  $('#mEarth').textContent = fmtPct(m.earthPct, 0);
-  $('#mSunL').textContent = `of ${Y} in sunlight`;
-  $('#mEarthL').textContent = `of ${Y} with Earth in view`;
+  const s = prepareSite(byId('shackleton_rim_sr1')), win = await series(s, now, 30 * 24);
+  const el = $('#mSky'), W = Math.max(300, el.clientWidth), H = 170, lo = -3, hi = 5;
+  const X = az => az / 360 * W, Yp = e => (hi - e) / (hi - lo) * (H - 18);
+  let d = `M0,${H - 18}`;
+  s.skyline.forEach((v, i) => { d += `L${X(i * .5).toFixed(1)},${Yp(Math.max(lo, v)).toFixed(1)}`; });
+  d += `L${W},${H - 18}Z`;
+  let sun = '';
+  for (let i = 0; i < win.n; i += 6) if (win.valid[i]) sun += `<circle cx="${X(win.sunAz[i]).toFixed(1)}" cy="${Yp(win.sunEl[i]).toFixed(1)}" r="1.6" fill="${win.sunFrac[i] >= VISIBLE ? '#F2B544' : '#3A4458'}"/>`;
+  const lab = ['N', 'E', 'S', 'W', 'N'].map((c, i) => `<text x="${Math.min(W - 8, Math.max(8, X(i * 90)))}" y="${H - 3}" font-size="10" fill="#8C98AB" font-family="Inter" font-weight="600" text-anchor="middle">${c}</text>`).join('');
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}"><defs><linearGradient id="mt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22324C"/><stop offset="1" stop-color="#0D1524"/></linearGradient></defs>
+    <line x1="0" x2="${W}" y1="${Yp(0)}" y2="${Yp(0)}" stroke="#2B3B55" stroke-dasharray="2 4"/>${sun}<path d="${d}" fill="url(#mt)" stroke="#57B8E8" stroke-opacity=".5"/>${lab}</svg>`;
+  const m = yearSummary(byId('shackleton_rim_sr1'), Y);
+  $('#mSun').textContent = `${fmtPct(m.sunPct, 0)} sunlit in ${Y}`;
 }
 await missionSky();
 revealOnScroll();
